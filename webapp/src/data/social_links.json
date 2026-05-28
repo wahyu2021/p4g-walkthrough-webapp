@@ -1,0 +1,245 @@
+[
+  {
+    "id": "fool",
+    "arcana": "Fool",
+    "arcana_num": 0,
+    "character": "Investigation Team",
+    "auto": true,
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "magician",
+    "arcana": "Magician",
+    "arcana_num": 1,
+    "character": "Yosuke Hanamura",
+    "start_date": "4/16",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "priestess",
+    "arcana": "Priestess",
+    "arcana_num": 2,
+    "character": "Yukiko Amagi",
+    "start_date": "5/17",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "empress",
+    "arcana": "Empress",
+    "arcana_num": 3,
+    "character": "Margaret",
+    "start_date": "5/19",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "emperor",
+    "arcana": "Emperor",
+    "arcana_num": 4,
+    "character": "Kanji Tatsumi",
+    "start_date": "6/9",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "hierophant",
+    "arcana": "Hierophant",
+    "arcana_num": 5,
+    "character": "Ryotaro Dojima",
+    "start_date": "5/6",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "lovers",
+    "arcana": "Lovers",
+    "arcana_num": 6,
+    "character": "Rise Kujikawa",
+    "start_date": "7/23",
+    "auto": true,
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "chariot",
+    "arcana": "Chariot",
+    "arcana_num": 7,
+    "character": "Chie Satonaka",
+    "start_date": "4/18",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "justice",
+    "arcana": "Justice",
+    "arcana_num": 8,
+    "character": "Nanako Dojima",
+    "start_date": "5/3",
+    "req_stat": "Expression",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "hermit",
+    "arcana": "Hermit",
+    "arcana_num": 9,
+    "character": "The Fox",
+    "start_date": "5/5",
+    "auto": true,
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "fortune",
+    "arcana": "Fortune",
+    "arcana_num": 10,
+    "character": "Naoto Shirogane",
+    "start_date": "10/21",
+    "req_stat": "Courage+Knowledge",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "strength",
+    "arcana": "Strength",
+    "arcana_num": 11,
+    "character": "Kou / Daisuke",
+    "start_date": "4/19",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "hanged",
+    "arcana": "Hanged Man",
+    "arcana_num": 12,
+    "character": "Naoki Konishi",
+    "start_date": "6/8",
+    "req_stat": "Understanding Rank 3",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "death",
+    "arcana": "Death",
+    "arcana_num": 13,
+    "character": "Hisano Kuroda",
+    "req_stat": "Devil Rank 4",
+    "req_job": "Hospital",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "temperance",
+    "arcana": "Temperance",
+    "arcana_num": 14,
+    "character": "Eri Minami",
+    "req_stat": "Understanding Rank 3",
+    "req_job": "Daycare",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "devil",
+    "arcana": "Devil",
+    "arcana_num": 15,
+    "character": "Sayoko Uehara",
+    "req_stat": "Diligence Rank 3",
+    "req_job": "Hospital",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "tower",
+    "arcana": "Tower",
+    "arcana_num": 16,
+    "character": "Shu Nakajima",
+    "req_stat": "Understanding Rank 5",
+    "req_job": "Tutor",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "star",
+    "arcana": "Star",
+    "arcana_num": 17,
+    "character": "Teddie",
+    "start_date": "6/24",
+    "auto": true,
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "moon",
+    "arcana": "Moon",
+    "arcana_num": 18,
+    "character": "Ai Ebihara",
+    "req_stat": "Strength Rank 4",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "sun",
+    "arcana": "Sun",
+    "arcana_num": 19,
+    "character": "Yumi Ozawa & Ayane Matsunaga",
+    "start_date": "4/25",
+    "req_job": "Culture Club",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "judgement",
+    "arcana": "Judgement",
+    "arcana_num": 20,
+    "character": "Seekers of Truth",
+    "auto": true,
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "jester",
+    "arcana": "Jester",
+    "arcana_num": 21,
+    "character": "Tohru Adachi",
+    "start_date": "5/13",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  },
+  {
+    "id": "aeon",
+    "arcana": "Aeon",
+    "arcana_num": 22,
+    "character": "Marie",
+    "start_date": "4/18",
+    "is_golden": true,
+    "deadline": "12/23",
+    "status": "not_scraped",
+    "ranks": [],
+    "overview": ""
+  }
+]

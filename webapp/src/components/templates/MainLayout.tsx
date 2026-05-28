@@ -13,13 +13,15 @@ export function MainLayout({ children, headerContent, sidebar }: MainLayoutProps
       <header className="w-full bg-p4-black border-b-4 border-p4-yellow sticky top-0 z-50 shadow-lg h-[60px] flex items-center">
         <div className="w-full max-w-[1400px] mx-auto px-4 flex items-center justify-between">
           <h1 
-            className="text-2xl md:text-3xl font-bold text-p4-yellow tracking-widest uppercase italic"
+            className="text-2xl md:text-3xl font-bold text-p4-yellow tracking-widest uppercase italic whitespace-nowrap"
             style={{ textShadow: '2px 2px 0px #000' }}
           >
             P4G <span className="text-white">Guide</span>
           </h1>
           {headerContent && (
-            <div>{headerContent}</div>
+            <div className="flex-1 flex justify-end">
+              {headerContent}
+            </div>
           )}
         </div>
       </header>

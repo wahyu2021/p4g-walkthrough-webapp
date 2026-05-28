@@ -4,10 +4,15 @@ import { MonthSelector } from './components/organisms/MonthSelector';
 import { DayList } from './components/organisms/DayList';
 import { SearchInput } from './components/atoms/SearchInput';
 import { ScrollToTop } from './components/atoms/ScrollToTop';
+import { NavTabs } from './components/molecules/NavTabs';
+import { SocialLinksPage } from './pages/SocialLinksPage';
+import { DungeonsPage } from './pages/DungeonsPage';
+import { ExamsPage } from './pages/ExamsPage';
 import { getAvailableMonths, getWalkthroughData } from './utils/dataFetcher';
 import { useProgress } from './hooks/useProgress';
 
 function App() {
+  const [currentView, setCurrentView] = useState('walkthrough');
   const availableMonths = getAvailableMonths();
   const allData = getWalkthroughData();
   const { completedDays, resetProgress } = useProgress();
@@ -35,50 +40,102 @@ function App() {
 
   const progressPercentage = Math.round((completedCount / totalDays) * 100) || 0;
 
+  const sidebarContent = (
+    <div className="flex flex-col py-6 space-y-8">
+      {/* Main Menu Section */}
+      <section>
+        <h3 className="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">
+          Main Menu
+        </h3>
+        <div className="md:px-2">
+          <NavTabs 
+            currentView={currentView} 
+            onViewChange={setCurrentView} 
+            isVertical={window.innerWidth >= 768} 
+          />
+        </div>
+      </section>
+
+      {/* Timeline Section (Only for Walkthrough) */}
+      {currentView === 'walkthrough' && (
+        <section className="animate-in fade-in slide-in-from-left-4 duration-500">
+          <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">
+            Timeline
+          </h3>
+          <MonthSelector 
+            months={availableMonths} 
+            activeMonth={activeMonth} 
+            onMonthSelect={(m) => {
+              setActiveMonth(m);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }} 
+          />
+        </section>
+      )}
+
+      {/* System Section */}
+      <section className="mt-auto pt-6 border-t border-p4-gray/20">
+        <h3 className="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">
+          System
+        </h3>
+        <div className="px-6">
+          <button 
+            onClick={resetProgress}
+            className="text-[10px] text-gray-500 hover:text-red-500 transition-colors uppercase font-bold tracking-widest"
+          >
+            Reset All Data
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+
   return (
     <MainLayout 
       headerContent={
         <div className="flex items-center space-x-4">
-           <div className="hidden md:flex flex-col items-end">
-             <div className="text-[10px] uppercase font-black text-p4-yellow tracking-tighter">Overall Progress</div>
-             <div className="w-32 h-2 bg-p4-gray rounded-full overflow-hidden border border-p4-black">
-               <div 
-                 className="h-full bg-p4-yellow transition-all duration-500" 
-                 style={{ width: `${progressPercentage}%` }}
-               />
+           <div className="flex items-center space-x-4">
+             <div className="flex flex-col items-end">
+               <div className="text-[10px] uppercase font-black text-p4-yellow tracking-tighter leading-none mb-1">Overall Progress</div>
+               <div className="w-24 h-1.5 bg-p4-gray rounded-full overflow-hidden border border-p4-black">
+                 <div 
+                   className="h-full bg-p4-yellow transition-all duration-500" 
+                   style={{ width: `${progressPercentage}%` }}
+                 />
+               </div>
+             </div>
+             <div className="bg-p4-yellow text-p4-black px-2 py-0.5 font-black italic text-sm skew-x-[-10deg]">
+               {progressPercentage}%
              </div>
            </div>
-           <div className="bg-p4-yellow text-p4-black px-2 py-0.5 font-black italic text-sm skew-x-[-10deg]">
-             {progressPercentage}%
-           </div>
-           <button 
-             onClick={resetProgress}
-             className="text-[10px] text-gray-500 hover:text-red-500 transition-colors uppercase font-bold"
-           >
-             Reset
-           </button>
         </div>
       }
-      sidebar={
-        <MonthSelector 
-          months={availableMonths} 
-          activeMonth={activeMonth} 
-          onMonthSelect={(m) => {
-            setActiveMonth(m);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }} 
-        />
-      }
+      sidebar={sidebarContent}
     >
-      <div className="flex flex-col space-y-6">
-        <div className="px-0">
-          <SearchInput value={searchQuery} onChange={setSearchQuery} />
+      {currentView === 'walkthrough' && (
+        <div className="flex flex-col space-y-6">
+          <div className="px-4">
+            <SearchInput value={searchQuery} onChange={setSearchQuery} />
+          </div>
+          
+          <div className="pb-10" key={activeMonth}>
+            <DayList days={activeMonthData} searchQuery={searchQuery} />
+          </div>
         </div>
-        
-        <div className="pb-10" key={activeMonth}>
-          <DayList days={activeMonthData} searchQuery={searchQuery} />
-        </div>
-      </div>
+      )}
+
+      {currentView === 'social' && (
+        <SocialLinksPage />
+      )}
+
+      {currentView === 'dungeons' && (
+        <DungeonsPage />
+      )}
+
+      {currentView === 'exams' && (
+        <ExamsPage />
+      )}
+
       <ScrollToTop />
     </MainLayout>
   );

@@ -6,3 +6,7 @@
 - [Day Cards](./tracks/day-cards/index.md) - *Rendering daily entries and implementing progress tracking.*
 - [Search & UI Polish](./tracks/search-ui-polish/index.md) - *Adding search and improving the user interface and transitions.*
 - [Sidebar Layout](./tracks/sidebar-layout/index.md) - *Refactoring layout to use a sticky sidebar for navigation on desktop.*
+- [Main Navigation & Social Links](./tracks/main-nav-social-links/index.md) - *Implementing multi-page navigation and the Social Links directory.*
+- [Dungeons Page](./tracks/dungeons-page/index.md) - *Creating the dungeon listing page with deadlines and info.*
+- [Exam Q&As](./tracks/exams-page/index.md) - *Extracting and listing all school lessons and exam answers.*
+- [Unified Sidebar Navigation](./tracks/unified-sidebar/index.md) - *Moving all primary navigation to a scalable sidebar system.*

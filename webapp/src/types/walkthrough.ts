@@ -13,7 +13,44 @@ export interface Day {
 }
 
 export interface WalkthroughMonth {
-  month: string;    
+  month: string;
   month_num: number;
   days: Day[];
+}
+
+export interface SocialLinkRank {
+  rank: number;
+  choices: { text: string; points: number; is_best?: boolean }[];
+  notes?: string;
+}
+
+export interface SocialLink {
+  id: string;
+  arcana: string;
+  arcana_num: number;
+  character: string;
+  start_date?: string;
+  auto?: boolean;
+  req_stat?: string;
+  ranks: SocialLinkRank[];
+  overview: string;
+}
+
+export interface DungeonFloor {
+  name: string;
+  enemies: string[];
+  items: string[];
+}
+
+export interface Dungeon {
+  id: string;
+  name: string;
+  order: number;
+  deadline: string;
+  dungeon_num: number;
+  status: string;
+  floors_count: number;
+  boss: { name: string; weaknesses: string[]; strategy: string } | null;
+  floors: DungeonFloor[];
+  overview: string;
 }

@@ -1,5 +1,5 @@
-import { useState, useEffect, ReactNode, useContext } from 'react';
-import { ProgressContext, ProgressContextType } from './ProgressContextInstance';
+import { useState, useEffect, ReactNode } from 'react';
+import { ProgressContext } from './ProgressContextInstance';
 
 const STORAGE_KEY = 'p4g-walkthrough-progress';
 
@@ -34,11 +34,3 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     </ProgressContext.Provider>
   );
 }
-
-export const useProgressContext = () => {
-  const context = useContext(ProgressContext);
-  if (context === undefined) {
-    throw new Error('useProgressContext must be used within a ProgressProvider');
-  }
-  return context;
-};

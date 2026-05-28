@@ -11,3 +11,5 @@
 - [Exam Q&As](./tracks/exams-page/index.md) - *Extracting and listing all school lessons and exam answers.*
 - [Unified Sidebar Navigation](./tracks/unified-sidebar/index.md) - *Moving all primary navigation to a scalable sidebar system.*
 - [Global Progress Context](./tracks/global-progress-context/index.md) - *Implementing React Context to fix state synchronization bugs.*
+- [Dungeon Scraper Upgrade](./tracks/dungeon-scraper-upgrade/index.md) - *Upgrading the Python scraper to extract full dungeon data.*
+- [Interactive Dungeon Guide](./tracks/interactive-dungeon-guide/index.md) - *Building a detailed UI for enemies, bosses, and loot.*

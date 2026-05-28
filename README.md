@@ -1,72 +1,161 @@
-# Persona 4 Golden Walkthrough Scraper & Web App
+# 🎮 Persona 4 Golden — Interactive Walkthrough
 
-Proyek ini bertujuan untuk mengonversi *100% Completion Guide* Persona 4 Golden dari GameFAQs (FAQ #76145 oleh Hurricanehaon) menjadi format data terstruktur (JSON), yang selanjutnya akan digunakan sebagai basis data untuk membangun aplikasi web *walkthrough* interaktif yang estetis.
+> **100% Completion Guide** untuk Persona 4 Golden, dikonversi dari panduan legendaris [Hurricanehaon (GameFAQs)](https://gamefaqs.gamespot.com/vita/641695-persona-4-golden/faqs/76145) menjadi aplikasi web interaktif yang modern dan estetis.
 
-## 📌 Latar Belakang & Fitur Utama
+![Tech Stack](https://img.shields.io/badge/React_19-61DAFB?style=flat&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=flat&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/Python_3.14-3776AB?style=flat&logo=python&logoColor=white)
 
-Panduan asli di GameFAQs berbentuk teks panjang yang dilindungi oleh proteksi *anti-bot* ketat (Cloudflare). Oleh karena itu, *scraper* ini tidak dibuat dengan metode ekstraksi HTTP biasa, melainkan menggunakan sistem peramban otomatis.
+---
 
-Fitur utama scraper ini meliputi:
-- **Cloudflare Bypass (Stealth Mode)**: Menggunakan `Playwright` untuk merender halaman secara penuh layaknya peramban nyata, memungkinkan *script* untuk melewati tantangan Cloudflare (termasuk mode visual untuk penyelesaian CAPTCHA manual jika diperlukan).
-- **Single-Page Architecture Parsing**: Mengambil keseluruhan panduan menggunakan *URL query* `?single=1` dan mengekstrak blok-blok konten berdasarkan *heading anchor id* (`#april`, `#may`, `#yukikos-castle`, dsb.).
-- **Smart Text Extractor**: Mampu mengidentifikasi tanggal dan jenis instruksi, meskipun format asli hanya berupa *plain text* (`----------------~April 11th~----------------`) yang dibungkus di dalam tag `<p>`.
-- **JSON Structuring**: Menghasilkan file JSON yang bersih dan siap konsumsi (`walkthrough.json`, `dungeons.json`, `social_links.json`).
+## ✨ Fitur Utama
 
-## 📂 Struktur Direktori
+| Fitur | Deskripsi |
+|:------|:----------|
+| 📅 **Walkthrough Timeline** | Panduan hari demi hari (280 hari, 1800+ instruksi) dengan navigasi per bulan |
+| ✅ **Progress Tracker** | Centang hari yang sudah selesai — progres tersimpan otomatis di browser (`localStorage`) |
+| 🔍 **Live Search** | Cari instruksi, aktivitas, atau event tertentu secara instan |
+| ⚔️ **Dungeon Guide** | Daftar 11 dungeon lengkap dengan deadline dan info boss |
+| 💬 **Social Links** | Direktori 23 Social Link dengan detail Arcana dan karakter |
+| 📝 **Exam Answers** | Kumpulan jawaban ujian dan kuis sekolah |
+| 🎨 **Persona 4 Aesthetic** | UI bertema khas P4G — kuning ikonik, efek skew, animasi mikro, dan desain bold |
+
+---
+
+## 📸 Tampilan Aplikasi
+
+> _Screenshots akan ditambahkan setelah fase polish selesai._
+
+---
+
+## 🏗️ Arsitektur Proyek
+
+Proyek ini terdiri dari **2 modul utama**: sebuah _scraper_ Python yang mengekstrak data dari GameFAQs, dan sebuah _web app_ React yang menampilkan data tersebut.
 
 ```text
 P4G Walkthrough/
-├── data/                  # Folder output data terstruktur
-│   ├── raw/               # (Cache) File HTML mentah hasil scraping
-│   ├── walkthrough.json   # Data timeline hari demi hari (280 hari, 1800+ entries)
-│   ├── dungeons.json      # Data panduan dungeon & boss
-│   └── social_links.json  # Data interaksi Social Link
-├── scraper/               # Direktori source code Python Scraper
-│   ├── browser.py         # Modul Playwright & Cloudflare bypass
-│   ├── config.py          # Konfigurasi URL, metadata, & anchors
-│   ├── fetcher.py         # Logika pengunduhan (download) konten
-│   ├── main.py            # CLI Entry Point
-│   ├── parser.py          # Ekstraktor BeautifulSoup (Logika text-to-data)
-│   ├── structurer.py      # Pembentuk format JSON akhir
-│   └── test_parser.py     # Script pengujian logika parser secara offline
-└── webapp/                # (Tahap Selanjutnya) Source code Frontend React Web App
+│
+├── 📁 scraper/                    # Python – Data Extraction Tool
+│   ├── main.py                    # CLI entry point
+│   ├── browser.py                 # Playwright + Cloudflare bypass
+│   ├── fetcher.py                 # Logika download konten
+│   ├── parser.py                  # BeautifulSoup text-to-data
+│   ├── structurer.py              # Pembentuk JSON akhir
+│   ├── config.py                  # URL, metadata, dan anchors
+│   └── requirements.txt           # Dependensi Python
+│
+├── 📁 webapp/                     # React – Interactive Web App
+│   └── src/
+│       ├── components/
+│       │   ├── atoms/             # Button, SearchInput, ActivityEntry, ScrollToTop
+│       │   ├── molecules/         # DayCard, MonthTab, NavTabs, DungeonCard, SocialLinkCard, ExamCard
+│       │   ├── organisms/         # DayList, MonthSelector
+│       │   └── templates/         # MainLayout (header + sidebar + content)
+│       ├── pages/                 # SocialLinksPage, DungeonsPage, ExamsPage
+│       ├── hooks/                 # useProgress (localStorage state)
+│       ├── context/               # React Context (global progress state)
+│       ├── types/                 # TypeScript interfaces
+│       ├── utils/                 # Data fetcher helpers
+│       └── data/                  # File JSON hasil scraping
+│
+├── 📁 data/                       # Output JSON terstruktur
+│   ├── walkthrough.json           # 280 hari, 1875 entries
+│   ├── dungeons.json              # 11 dungeon
+│   ├── social_links.json          # 23 Social Links
+│   ├── exams.json                 # Jawaban ujian
+│   └── raw/                       # (gitignored) Cache HTML mentah
+│
+└── README.md
 ```
 
-## 🛠️ Cara Menjalankan Scraper
+---
 
-1. **Persiapan *Environment***
-   Pastikan Anda sudah menginstal Python (disarankan 3.10+). Masuk ke folder `scraper/` dan buat *virtual environment*:
-   ```bash
-   cd scraper
-   python -m venv venv
-   ```
+## 🚀 Quick Start
 
-2. **Aktivasi Venv**
-   - Windows (PowerShell): `.\venv\Scripts\Activate.ps1`
-   - Linux/Mac: `source venv/bin/activate`
+### Web App (Frontend)
 
-3. **Instalasi Dependensi**
-   ```bash
-   pip install -r requirements.txt
-   playwright install chromium
-   ```
+```bash
+cd webapp
+npm install
+npm run dev
+```
 
-4. **Menjalankan CLI**
-   Scraper memiliki opsi CLI yang kaya. Anda dapat menjalankannya dalam mode *visible* (jika butuh intervensi CAPTCHA) menggunakan flag `--no-headless`:
-   ```bash
-   # Meng-scrape khusus bagian walkthrough bulanan
-   python main.py --no-headless --sections walkthrough
+Aplikasi akan berjalan di `http://localhost:5173`.
 
-   # Meng-scrape semua panduan secara berurutan
-   python main.py --no-headless --sections all
-   ```
+### Scraper (Opsional — hanya jika ingin re-scrape data)
 
-## 🚀 Roadmap Proyek
+```bash
+cd scraper
+python -m venv venv
 
-- [x] **Fase 1: Data Extraction** (Menyelesaikan *scraper*, membersihkan logika parsing, validasi JSON).
-- [ ] **Fase 2: Frontend Foundation** (Membuat aplikasi web dengan Vite + React.js, menyiapkan sistem *routing* dan desain Vanilla CSS bernuansa khas P4G).
-- [ ] **Fase 3: Fitur Interaktif** (Mengimplementasikan UI *timeline* harian interaktif, fitur centang / *checklist* progres menggunakan *local storage*).
-- [ ] **Fase 4: Polish & Deployment** (Micro-animations, responsivitas seluler, dan publikasi Vercel/Netlify).
+# Aktivasi virtual environment
+# Windows: .\venv\Scripts\Activate.ps1
+# Linux/Mac: source venv/bin/activate
+
+pip install -r requirements.txt
+playwright install chromium
+
+# Jalankan scraper
+python main.py --no-headless --sections walkthrough
+python main.py --no-headless --sections all
+```
+
+> **Catatan:** GameFAQs menggunakan Cloudflare. Scraper menggunakan Playwright (headless browser) untuk mem-bypass proteksi ini. Jika CAPTCHA muncul, browser akan terbuka secara visible agar bisa diselesaikan secara manual.
 
 ---
-*Disclaimer: Proyek ini dibuat semata-mata untuk pembelajaran scraping dan pengembangan UI/UX. Semua teks panduan P4G adalah hak cipta dari penulis asli (Hurricanehaon).*
+
+## 🛠️ Tech Stack
+
+### Frontend
+| Teknologi | Versi | Fungsi |
+|:----------|:------|:-------|
+| **React** | 19 | UI library |
+| **Vite** | 8 | Build tool & dev server |
+| **Tailwind CSS** | 4 | Utility-first styling |
+| **TypeScript** | 6 | Type safety |
+
+### Scraper
+| Teknologi | Fungsi |
+|:----------|:-------|
+| **Python 3.14** | Runtime |
+| **Playwright** | Browser automation + Cloudflare bypass |
+| **BeautifulSoup4** | HTML parsing & data extraction |
+
+### Arsitektur Komponen (Atomic Design)
+Webapp menggunakan pola **Atomic Design** untuk organisasi komponen:
+- **Atoms** → Elemen terkecil yang berdiri sendiri (`Button`, `SearchInput`, `ActivityEntry`)
+- **Molecules** → Gabungan atom yang membentuk unit fungsional (`DayCard`, `MonthTab`, `DungeonCard`)
+- **Organisms** → Gabungan molecules yang membentuk section (`DayList`, `MonthSelector`)
+- **Templates** → Layout halaman (`MainLayout` dengan header, sidebar, dan area konten)
+
+---
+
+## 📊 Data yang Diekstrak
+
+Data mentah dari guide Hurricanehaon berhasil dikonversi menjadi JSON terstruktur:
+
+| File | Konten | Ukuran |
+|:-----|:-------|:-------|
+| `walkthrough.json` | 12 bulan + NG+, 280 hari, 1875 instruksi | ~375 KB |
+| `dungeons.json` | 11 dungeon (termasuk Golden-exclusive) | ~3 KB |
+| `social_links.json` | 23 Social Links + metadata Arcana | ~5 KB |
+| `exams.json` | Jawaban ujian sekolah | ~2 KB |
+
+---
+
+## 🗺️ Roadmap
+
+- [x] **Fase 1 — Data Extraction**: Scraper Python, Cloudflare bypass, parser HTML-to-JSON
+- [x] **Fase 2 — Frontend Foundation**: Inisialisasi Vite + React + Tailwind, layout responsive dengan sidebar
+- [x] **Fase 3 — Core Features**: Walkthrough timeline, progress tracker, search, halaman Dungeon/Social Link/Exam
+- [ ] **Fase 4 — Polish & Deploy**: Micro-animations lanjutan, responsivitas mobile, PWA support, deploy ke Vercel/Netlify
+
+---
+
+## 📜 Lisensi & Disclaimer
+
+Proyek ini dibuat semata-mata untuk **keperluan pembelajaran** (*web scraping*, *frontend development*, dan *UI/UX design*).
+
+Seluruh konten panduan walkthrough Persona 4 Golden adalah hak cipta dari penulis aslinya, **[Hurricanehaon](https://gamefaqs.gamespot.com/community/Hurricanehaon)**, dan dipublikasikan di [GameFAQs](https://gamefaqs.gamespot.com/vita/641695-persona-4-golden/faqs/76145). Persona 4 Golden adalah milik **ATLUS / SEGA**.

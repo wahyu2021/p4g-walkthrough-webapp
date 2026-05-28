@@ -1,0 +1,76 @@
+# =========================
+# Python / Scraper
+# =========================
+scraper/venv/
+scraper/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# =========================
+# Node / React WebApp (Vite)
+# =========================
+webapp/node_modules/
+webapp/dist/
+webapp/dist-ssr/
+webapp/*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Data / Scraping Output
+# =========================
+# Mengabaikan file raw HTML hasil download (cukup simpan data JSON akhirnya saja di git)
+data/raw/
+# Uncomment baris di bawah jika Anda tidak ingin menyimpan file json di repository Git
+# data/*.json
+
+# =========================
+# OS / IDE / Environments
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.vscode/
+.idea/
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+.gemini/

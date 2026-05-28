@@ -35,10 +35,14 @@ function App() {
   }, [allData]);
 
   const completedCount = useMemo(() => {
-    return Object.values(completedDays).filter(Boolean).length;
+    // We only count keys that are explicitly set to TRUE
+    return Object.keys(completedDays).filter(key => completedDays[key] === true).length;
   }, [completedDays]);
 
-  const progressPercentage = Math.round((completedCount / totalDays) * 100) || 0;
+  const progressPercentage = useMemo(() => {
+    if (totalDays === 0) return "0.00";
+    return ((completedCount / totalDays) * 100).toFixed(2);
+  }, [completedCount, totalDays]);
 
   const sidebarContent = (
     <div className="flex flex-col py-6 space-y-8">
@@ -51,7 +55,7 @@ function App() {
           <NavTabs 
             currentView={currentView} 
             onViewChange={setCurrentView} 
-            isVertical={window.innerWidth >= 768} 
+            isVertical={true} 
           />
         </div>
       </section>
@@ -72,28 +76,13 @@ function App() {
           />
         </section>
       )}
-
-      {/* System Section */}
-      <section className="mt-auto pt-6 border-t border-p4-gray/20">
-        <h3 className="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">
-          System
-        </h3>
-        <div className="px-6">
-          <button 
-            onClick={resetProgress}
-            className="text-[10px] text-gray-500 hover:text-red-500 transition-colors uppercase font-bold tracking-widest"
-          >
-            Reset All Data
-          </button>
-        </div>
-      </section>
     </div>
   );
 
   return (
     <MainLayout 
       headerContent={
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
            <div className="flex items-center space-x-4">
              <div className="flex flex-col items-end">
                <div className="text-[10px] uppercase font-black text-p4-yellow tracking-tighter leading-none mb-1">Overall Progress</div>
@@ -104,9 +93,18 @@ function App() {
                  />
                </div>
              </div>
-             <div className="bg-p4-yellow text-p4-black px-2 py-0.5 font-black italic text-sm skew-x-[-10deg]">
+             <div className="bg-p4-yellow text-p4-black px-2 py-0.5 font-black italic text-sm skew-x-[-10deg] min-w-[60px] text-center">
                {progressPercentage}%
              </div>
+           </div>
+           
+           <div className="border-l border-p4-gray/30 pl-6 hidden sm:block">
+             <button 
+                onClick={resetProgress}
+                className="text-[10px] text-gray-500 hover:text-red-500 transition-colors uppercase font-black tracking-widest border border-p4-gray/30 px-2 py-1 hover:border-red-500/50 bg-p4-black/20"
+              >
+                Reset
+              </button>
            </div>
         </div>
       }

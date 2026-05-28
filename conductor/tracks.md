@@ -10,3 +10,4 @@
 - [Dungeons Page](./tracks/dungeons-page/index.md) - *Creating the dungeon listing page with deadlines and info.*
 - [Exam Q&As](./tracks/exams-page/index.md) - *Extracting and listing all school lessons and exam answers.*
 - [Unified Sidebar Navigation](./tracks/unified-sidebar/index.md) - *Moving all primary navigation to a scalable sidebar system.*
+- [Global Progress Context](./tracks/global-progress-context/index.md) - *Implementing React Context to fix state synchronization bugs.*

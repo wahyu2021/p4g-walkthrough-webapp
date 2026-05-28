@@ -1,14 +1,7 @@
-import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
-
-interface ProgressContextType {
-  completedDays: Record<string, boolean>;
-  toggleDay: (date: string) => void;
-  isDayCompleted: (date: string) => boolean;
-  resetProgress: () => void;
-}
+import { useState, useEffect, ReactNode, useContext } from 'react';
+import { ProgressContext, ProgressContextType } from './ProgressContextInstance';
 
 const STORAGE_KEY = 'p4g-walkthrough-progress';
-export const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [completedDays, setCompletedDays] = useState<Record<string, boolean>>(() => {
@@ -42,7 +35,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Helper internal hook just for this context
 export const useProgressContext = () => {
   const context = useContext(ProgressContext);
   if (context === undefined) {

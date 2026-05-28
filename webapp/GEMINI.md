@@ -30,9 +30,13 @@ We strictly follow the Atomic Design methodology for our component structure. Ne
 
 ## 4. P4G Visual Aesthetics
 - **High Contrast**: Emphasize stark contrasts (Yellow vs Black).
-- **Stylization**: Use slight rotations, sharp corners, or asymmetrical borders to mimic the game's UI.
+- **Stylization**: Use `clip-path: polygon(...)` instead of `transform: skewX` for tall cards to prevent content clipping and layout overlap.
 - **Backgrounds**: Use TV static patterns or subtle gray patterns for backgrounds to fit the theme.
 
-## 5. Development Workflow
-- When modifying state or local storage logic, ensure the updates are immutable.
-- Always add types for props in React functional components.
+## 5. UI Interactions
+- **Horizontal Scroll**: For horizontal containers (like Month Selector), implement a mouse wheel listener to translate vertical scroll to horizontal scroll on desktop.
+- **Sticky Elements**: Use `sticky` headers for dates on long cards to maintain user context.
+
+## 6. Development Workflow
+- When modifying state or local storage logic, ensure the updates are immutable and use Global Context for synchronized state across components.
+- Always add types for props in React functional components using `import type`.

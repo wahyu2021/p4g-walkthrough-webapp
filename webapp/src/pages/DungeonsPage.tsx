@@ -9,7 +9,7 @@ export function DungeonsPage() {
     <div className="flex flex-col space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="bg-p4-black border-l-8 border-p4-yellow p-6 mb-4 relative overflow-hidden">
         {/* Decorative TV lines effect */}
-        <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%]" />
+        <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-size-[100%_4px,3px_100%]" />
         
         <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter relative z-10">
           Midnight <span className="text-p4-yellow">Dungeons</span>

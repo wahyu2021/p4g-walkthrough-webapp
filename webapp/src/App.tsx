@@ -93,7 +93,7 @@ function App() {
                  />
                </div>
              </div>
-             <div className="bg-p4-yellow text-p4-black px-2 py-0.5 font-black italic text-sm skew-x-[-10deg] min-w-[60px] text-center">
+             <div className="bg-p4-yellow text-p4-black px-2 py-0.5 font-black italic text-sm skew-x-[-10deg] min-w-15 text-center">
                {progressPercentage}%
              </div>
            </div>

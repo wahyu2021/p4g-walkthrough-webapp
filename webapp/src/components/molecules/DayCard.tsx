@@ -33,7 +33,7 @@ export function DayCard({    day, isCompleted, onToggle }: DayCardProps) {
         {/* Header Bagian Atas (STICKY) */}
         <div 
           className={`
-            p-4 flex justify-between items-center sticky top-[60px] z-30 backdrop-blur-md
+            p-4 flex justify-between items-center sticky top-15 z-30 backdrop-blur-md
             ${isCompleted ? 'bg-p4-gray/90' : 'bg-p4-black/90 border-b border-p4-yellow/20'}
           `}
         >
@@ -52,7 +52,7 @@ export function DayCard({    day, isCompleted, onToggle }: DayCardProps) {
               px-6 py-1 text-xs font-black uppercase tracking-widest transition-all border-2
               ${isCompleted 
                 ? 'bg-p4-gray text-gray-400 border-gray-500' 
-                : 'bg-p4-yellow text-p4-black border-p4-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'}
+                : 'bg-p4-yellow text-p4-black border-p4-black shadow-[3px_3px_0px_0px_#000] hover:-translate-x-px hover:-translate-y-px active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'}
             `}
           >
             {isCompleted ? 'CLEARED' : 'COMPLETE'}

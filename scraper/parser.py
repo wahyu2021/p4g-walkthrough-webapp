@@ -284,6 +284,50 @@ BOSS_KEYWORDS = ["boss", "shadow", "final boss", "mini-boss"]
 WEAK_PATTERN  = re.compile(r"(?:weak(?:ness)?|vulnerable)\s*(?:to|:)?\s*(.+)", re.IGNORECASE)
 
 
+AFFINITY_MAP = {
+    "wk": "Weak",
+    "str": "Resist",
+    "nul": "Null",
+    "rpl": "Repel",
+    "drn": "Drain",
+    "dr": "Drain",
+    "-": "-",
+    " ": "-",
+    "": "-"
+}
+
+def normalize_affinity(val: str) -> str:
+    v = val.lower().strip()
+    return AFFINITY_MAP.get(v, val.strip() or "-")
+
+def parse_ffaq_table(table_el) -> list[dict]:
+    """Konversi HTML table ffaq menjadi list of dicts"""
+    if not table_el:
+        return []
+    
+    rows = table_el.find_all("tr")
+    if not rows or len(rows) < 2:
+        return []
+        
+    headers = []
+    for th in rows[0].find_all(["th", "td"]):
+        text = clean_text(th.get_text()).lower().strip()
+        text = re.sub(r"[^a-z0-9]+", "_", text).strip("_")
+        headers.append(text)
+        
+    data = []
+    for row in rows[1:]:
+        cols = row.find_all("td")
+        if len(cols) != len(headers):
+            continue
+            
+        row_data = {}
+        for i, col in enumerate(cols):
+            row_data[headers[i]] = clean_text(col.get_text())
+        data.append(row_data)
+        
+    return data
+
 def parse_dungeon_section(html: str, dungeon_name: str) -> dict:
     """
     Parse HTML dari satu section dungeon.
@@ -294,7 +338,9 @@ def parse_dungeon_section(html: str, dungeon_name: str) -> dict:
             "floors_count": int,
             "recommended_level": int | None,
             "deadline": str | None,
-            "boss": {"name": str, "weaknesses": list, "strategy": str} | None,
+            "bosses": list,
+            "mini_bosses": list,
+            "enemies": list,
             "floors": [{"floor": int, "notes": str}],
             "overview": str,
         }
@@ -309,7 +355,9 @@ def parse_dungeon_section(html: str, dungeon_name: str) -> dict:
         "recommended_level": None,
         "deadline": None,
         "boss": None,
+        "bosses": [],
         "mini_bosses": [],
+        "enemies": [],
         "floors": [],
         "overview": "",
         "raw_blocks": [],
@@ -336,6 +384,34 @@ def parse_dungeon_section(html: str, dungeon_name: str) -> dict:
     if deadline_match:
         dungeon["deadline"] = clean_text(deadline_match.group(1))
 
+    # Parse tables
+    for table in soup.find_all("table", class_="ffaq"):
+        prev = table.find_previous_sibling(["h2", "h3", "h4", "p", "strong", "b"])
+        title = "unknown"
+        if prev:
+            title = clean_text(prev.get_text()).lower()
+            
+        parsed_table = parse_ffaq_table(table)
+        if not parsed_table:
+            continue
+            
+        first_row = parsed_table[0]
+        if "enemy" in first_row:
+            for row in parsed_table:
+                for k in ["phy", "fir", "ice", "elc", "wnd", "lgt", "drk"]:
+                    if k in row:
+                        row[k] = normalize_affinity(row[k])
+            dungeon["enemies"].extend(parsed_table)
+        elif "boss" in first_row:
+            for row in parsed_table:
+                for k in ["phy", "fir", "ice", "elc", "wnd", "lgt", "drk"]:
+                    if k in row:
+                        row[k] = normalize_affinity(row[k])
+            if "mini" in title or "early" in title or "optional" in title:
+                dungeon["mini_bosses"].extend(parsed_table)
+            else:
+                dungeon["bosses"].extend(parsed_table)
+
     # Parse blocks untuk boss & floors
     for block in blocks:
         title = block["title"].lower()
@@ -348,11 +424,13 @@ def parse_dungeon_section(html: str, dungeon_name: str) -> dict:
             if weak_match:
                 weaknesses = [w.strip() for w in re.split(r"[,/&]", weak_match.group(1)) if w.strip()]
 
-            dungeon["boss"] = {
-                "name": block["title"],
-                "weaknesses": weaknesses,
-                "strategy": content[:500] if content else "",
-            }
+            # Tetap simpan ini untuk backward compatibility, tapi utamakan tables di kemudian hari
+            if not dungeon["boss"]:
+                dungeon["boss"] = {
+                    "name": block["title"],
+                    "weaknesses": weaknesses,
+                    "strategy": content[:500] if content else "",
+                }
 
         # Floor section
         floor_match = FLOOR_PATTERN.search(block["title"])

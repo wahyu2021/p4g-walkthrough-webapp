@@ -23,11 +23,9 @@ Aplikasi panduan 100% completion Persona 4 Golden berbasis Web React dengan data
 - **Z-Index Isolate**: Perbaikan border SearchInput yang "tenggelam" dengan menggunakan CSS isolation.
 
 ## Draft Baru (Untuk Sesi Selanjutnya)
-1. **Dungeon Scraper Upgrade**: Rencana untuk mengekstrak tabel FAQ (Bestiary, Boss Stats) dan daftar Loot/Persona menggunakan Python. [Dungeon Scraper Plan](./tracks/dungeon-scraper-upgrade/plan.md)
-2. **The Midnight Hub (Interactive Dungeon)**: Fitur bestiary yang bisa difilter berdasarkan kelemahan elemen dan strategi boss detail. [Interactive Guide Plan](./tracks/interactive-dungeon-guide/plan.md)
+1. **React Router Migration**: Migrasi arsitektur *routing* dari *conditional rendering* (React State) menjadi `react-router-dom` agar mendukung *deep linking* dan riwayat browser. [React Router Plan](./tracks/react-router-migration/plan.md)
 
 ## Langkah Selanjutnya (Backlog)
-- Eksekusi Scraper Dungeon Upgrade.
 - Implementasi widget "Today's Schedule" (Prioritas Hari Pertama yang Belum Selesai).
 - Social Stats & Collection Tracker.
 - Deployment ke Vercel/Netlify.

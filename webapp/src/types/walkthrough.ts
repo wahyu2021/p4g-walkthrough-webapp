@@ -36,10 +36,42 @@ export interface SocialLink {
   overview: string;
 }
 
+export interface DungeonEnemy {
+  enemy: string;
+  arcana: string;
+  lv: string;
+  hp: string;
+  sp: string;
+  phy: string;
+  fir: string;
+  ice: string;
+  elc: string;
+  wnd: string;
+  lgt: string;
+  drk: string;
+  rd?: string;
+  floor: string;
+}
+
+export interface DungeonBoss {
+  boss: string;
+  lv: string;
+  hp: string;
+  sp: string;
+  phy: string;
+  fir: string;
+  ice: string;
+  elc: string;
+  wnd: string;
+  lgt: string;
+  drk: string;
+  floor: string;
+}
+
 export interface DungeonFloor {
-  name: string;
-  enemies: string[];
-  items: string[];
+  floor: number;
+  title: string;
+  notes: string;
 }
 
 export interface Dungeon {
@@ -51,6 +83,10 @@ export interface Dungeon {
   status: string;
   floors_count: number;
   boss: { name: string; weaknesses: string[]; strategy: string } | null;
+  bosses: DungeonBoss[];
+  mini_bosses: DungeonBoss[];
+  enemies: DungeonEnemy[];
   floors: DungeonFloor[];
   overview: string;
 }
+

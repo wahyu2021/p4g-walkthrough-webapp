@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
 import { DayList } from './components/organisms/DayList';
@@ -12,7 +13,7 @@ import { getAvailableMonths, getWalkthroughData } from './utils/dataFetcher';
 import { useProgress } from './hooks/useProgress';
 
 function App() {
-  const [currentView, setCurrentView] = useState('walkthrough');
+  const location = useLocation();
   const availableMonths = getAvailableMonths();
   const allData = getWalkthroughData();
   const { completedDays, resetProgress } = useProgress();
@@ -53,15 +54,13 @@ function App() {
         </h3>
         <div className="md:px-2">
           <NavTabs 
-            currentView={currentView} 
-            onViewChange={setCurrentView} 
             isVertical={true} 
           />
         </div>
       </section>
 
       {/* Timeline Section (Only for Walkthrough) */}
-      {currentView === 'walkthrough' && (
+      {location.pathname === '/' && (
         <section className="animate-in fade-in slide-in-from-left-4 duration-500">
           <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">
             Timeline
@@ -110,29 +109,22 @@ function App() {
       }
       sidebar={sidebarContent}
     >
-      {currentView === 'walkthrough' && (
-        <div className="flex flex-col space-y-6">
-          <div className="px-4">
-            <SearchInput value={searchQuery} onChange={setSearchQuery} />
+      <Routes>
+        <Route path="/" element={
+          <div className="flex flex-col space-y-6">
+            <div className="px-4">
+              <SearchInput value={searchQuery} onChange={setSearchQuery} />
+            </div>
+            
+            <div className="pb-10" key={activeMonth}>
+              <DayList days={activeMonthData} searchQuery={searchQuery} />
+            </div>
           </div>
-          
-          <div className="pb-10" key={activeMonth}>
-            <DayList days={activeMonthData} searchQuery={searchQuery} />
-          </div>
-        </div>
-      )}
-
-      {currentView === 'social' && (
-        <SocialLinksPage />
-      )}
-
-      {currentView === 'dungeons' && (
-        <DungeonsPage />
-      )}
-
-      {currentView === 'exams' && (
-        <ExamsPage />
-      )}
+        } />
+        <Route path="/social-links" element={<SocialLinksPage />} />
+        <Route path="/dungeons" element={<DungeonsPage />} />
+        <Route path="/exams" element={<ExamsPage />} />
+      </Routes>
 
       <ScrollToTop />
     </MainLayout>

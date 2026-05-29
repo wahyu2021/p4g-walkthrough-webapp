@@ -13,3 +13,4 @@
 - [Global Progress Context](./tracks/global-progress-context/index.md) - *Implementing React Context to fix state synchronization bugs.*
 - [Dungeon Scraper Upgrade](./tracks/dungeon-scraper-upgrade/index.md) - *Upgrading the Python scraper to extract full dungeon data.*
 - [Interactive Dungeon Guide](./tracks/interactive-dungeon-guide/index.md) - *Building a detailed UI for enemies, bosses, and loot.*
+- [React Router Migration](./tracks/react-router-migration/index.md) - *Migrating app navigation to react-router-dom.*

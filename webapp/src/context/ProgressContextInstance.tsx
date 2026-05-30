@@ -14,6 +14,12 @@ export interface ProgressContextType {
   isDayCompleted: (date: string) => boolean;
   socialStats: SocialStats;
   updateStat: (stat: keyof SocialStats, level: number) => void;
+  completedQuests: Record<string, boolean>;
+  toggleQuest: (questId: string) => void;
+  isQuestCompleted: (questId: string) => boolean;
+  completedBooks: Record<string, boolean>;
+  toggleBook: (bookId: string) => void;
+  isBookCompleted: (bookId: string) => boolean;
   resetProgress: () => void;
 }
 

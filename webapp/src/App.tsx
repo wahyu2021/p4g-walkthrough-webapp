@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
@@ -6,14 +6,16 @@ import { DungeonSelector } from './components/organisms/DungeonSelector';
 import { TodaysSchedule } from './components/organisms/TodaysSchedule';
 import { ScrollToTop } from './components/atoms/ScrollToTop';
 import { NavTabs } from './components/molecules/NavTabs';
-import { SocialLinksPage } from './pages/SocialLinksPage';
-import { DungeonsPage } from './pages/DungeonsPage';
-import { ExamsPage } from './pages/ExamsPage';
-import { TrackerPage } from './pages/TrackerPage';
-import { VelvetRoomPage } from './pages/VelvetRoomPage';
-import { WalkthroughView } from './components/templates/WalkthroughView';
 import { getAvailableMonths, getWalkthroughData, getDungeons } from './utils/dataFetcher';
 import { useProgress } from './hooks/useProgress';
+
+// Lazy load pages for code splitting
+const WalkthroughView = lazy(() => import('./components/templates/WalkthroughView').then(module => ({ default: module.WalkthroughView })));
+const SocialLinksPage = lazy(() => import('./pages/SocialLinksPage').then(module => ({ default: module.SocialLinksPage })));
+const DungeonsPage = lazy(() => import('./pages/DungeonsPage').then(module => ({ default: module.DungeonsPage })));
+const ExamsPage = lazy(() => import('./pages/ExamsPage').then(module => ({ default: module.ExamsPage })));
+const TrackerPage = lazy(() => import('./pages/TrackerPage').then(module => ({ default: module.TrackerPage })));
+const VelvetRoomPage = lazy(() => import('./pages/VelvetRoomPage').then(module => ({ default: module.VelvetRoomPage })));
 
 function App() {
   const location = useLocation();
@@ -116,18 +118,24 @@ function App() {
       }
       sidebar={sidebarContent}
     >
-      <Routes>
-        <Route path="/" element={<Navigate to="/walkthrough/april" replace />} />
-        <Route path="/walkthrough" element={<Navigate to="/walkthrough/april" replace />} />
-        <Route path="/walkthrough/:monthSlug" element={<WalkthroughView />} />
-        
-        <Route path="/social-links" element={<SocialLinksPage />} />
-        <Route path="/dungeons" element={<DungeonsPage />} />
-        <Route path="/dungeons/:slug" element={<DungeonsPage />} />
-        <Route path="/exams" element={<ExamsPage />} />
-        <Route path="/tracker" element={<TrackerPage />} />
-        <Route path="/velvet-room" element={<VelvetRoomPage />} />
-      </Routes>
+      <Suspense fallback={
+        <div className="flex items-center justify-center h-64 text-p4-yellow font-bold uppercase tracking-widest animate-pulse">
+          Loading Data...
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={<Navigate to="/walkthrough/april" replace />} />
+          <Route path="/walkthrough" element={<Navigate to="/walkthrough/april" replace />} />
+          <Route path="/walkthrough/:monthSlug" element={<WalkthroughView />} />
+          
+          <Route path="/social-links" element={<SocialLinksPage />} />
+          <Route path="/dungeons" element={<DungeonsPage />} />
+          <Route path="/dungeons/:slug" element={<DungeonsPage />} />
+          <Route path="/exams" element={<ExamsPage />} />
+          <Route path="/tracker" element={<TrackerPage />} />
+          <Route path="/velvet-room" element={<VelvetRoomPage />} />
+        </Routes>
+      </Suspense>
 
       <ScrollToTop />
     </MainLayout>

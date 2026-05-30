@@ -1,4 +1,3 @@
-import React from 'react';
 
 interface AffinityBadgeProps {
   element: string; // 'Phy', 'Fir', 'Ice', 'Elc', 'Wnd', 'Lgt', 'Drk'

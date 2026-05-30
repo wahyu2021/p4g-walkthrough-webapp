@@ -1,4 +1,3 @@
-import React from 'react';
 import type { DungeonEnemy } from '../../types/walkthrough';
 import { AffinityBadge } from '../atoms/AffinityBadge';
 

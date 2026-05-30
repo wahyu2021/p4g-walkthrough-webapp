@@ -1,0 +1,258 @@
+[
+  {
+    "book": "The Lonely Man",
+    "series": "The Man's Life",
+    "chapters": "2",
+    "effect": "Courage",
+    "cost": "1,200 Yen",
+    "obtained": "Bookstore on April 20th"
+  },
+  {
+    "book": "Forever Macho",
+    "series": "The Man's Life",
+    "chapters": "2",
+    "effect": "Courage",
+    "cost": "1,200 Yen",
+    "obtained": "Bookstore on June 1st"
+  },
+  {
+    "book": "Man of History",
+    "series": "The Man's Life",
+    "chapters": "2",
+    "effect": "Courage",
+    "cost": "1,200 Yen",
+    "obtained": "Bookstore on July 15th"
+  },
+  {
+    "book": "Man-God",
+    "series": "The Man's Life",
+    "chapters": "2",
+    "effect": "Courage",
+    "cost": "1,200 Yen",
+    "obtained": "Bookstore on August 24th"
+  },
+  {
+    "book": "Farewell to Man",
+    "series": "The Man's Life",
+    "chapters": "2",
+    "effect": "Courage",
+    "cost": "1,200 Yen",
+    "obtained": "Bookstore on October 9th"
+  },
+  {
+    "book": "Off Today",
+    "series": "The Timid Teacher",
+    "chapters": "2",
+    "effect": "Understanding",
+    "cost": "1,500 Yen",
+    "obtained": "Bookstore on May 7th"
+  },
+  {
+    "book": "Short on Cash",
+    "series": "The Timid Teacher",
+    "chapters": "2",
+    "effect": "Understanding",
+    "cost": "1,500 Yen",
+    "obtained": "Bookstore on June 28th"
+  },
+  {
+    "book": "Changing Careers",
+    "series": "The Timid Teacher",
+    "chapters": "2",
+    "effect": "Understanding",
+    "cost": "1,500 Yen",
+    "obtained": "Bookstore on August 4th"
+  },
+  {
+    "book": "Sensei's Friends",
+    "series": "The Timid Teacher",
+    "chapters": "2",
+    "effect": "Understanding",
+    "cost": "1,500 Yen",
+    "obtained": "Bookstore on September 20th"
+  },
+  {
+    "book": "The Final Lesson",
+    "series": "The Timid Teacher",
+    "chapters": "2",
+    "effect": "Understanding",
+    "cost": "1,500 Yen",
+    "obtained": "Bookstore on November 1st"
+  },
+  {
+    "book": "The O-Cha Way",
+    "series": "Manual",
+    "chapters": "4",
+    "effect": "Knowledge",
+    "cost": "N/A",
+    "obtained": "Strength Hangout on August 10th"
+  },
+  {
+    "book": "The Gentle Way",
+    "series": "Manual",
+    "chapters": "4",
+    "effect": "Knowledge",
+    "cost": "N/A",
+    "obtained": "Quest 8"
+  },
+  {
+    "book": "The Divine Way",
+    "series": "Manual",
+    "chapters": "4",
+    "effect": "Knowledge",
+    "cost": "N/A",
+    "obtained": "Summer Festival on August 21st"
+  },
+  {
+    "book": "The Ramen Way",
+    "series": "Manual",
+    "chapters": "4",
+    "effect": "Knowledge",
+    "cost": "N/A",
+    "obtained": "Eat at Aiya 8 times"
+  },
+  {
+    "book": "The Punk's Way",
+    "series": "Manual",
+    "chapters": "4",
+    "effect": "Knowledge",
+    "cost": "N/A",
+    "obtained": "Quest 14"
+  },
+  {
+    "book": "Witch Detective",
+    "series": "Underage",
+    "chapters": "4",
+    "effect": "Understanding",
+    "cost": "N/A",
+    "obtained": "Strength Hangout on May 29th"
+  },
+  {
+    "book": "Poly-Land",
+    "series": "Underage",
+    "chapters": "4",
+    "effect": "Diligence",
+    "cost": "N/A",
+    "obtained": "Strength Hangout on July 15th"
+  },
+  {
+    "book": "Guide to Pests",
+    "series": "Underage",
+    "chapters": "4",
+    "effect": "Knowledge",
+    "cost": "N/A",
+    "obtained": "Quest 22"
+  },
+  {
+    "book": "Riddlemania",
+    "series": "Underage",
+    "chapters": "4",
+    "effect": "Understanding",
+    "cost": "N/A",
+    "obtained": "Quest 27"
+  },
+  {
+    "book": "Who Am I?",
+    "series": "Underage",
+    "chapters": "4",
+    "effect": "Knowledge",
+    "cost": "N/A",
+    "obtained": "Quest 34"
+  },
+  {
+    "book": "Expert Study Methods",
+    "series": "Status Parameter",
+    "chapters": "3",
+    "effect": "Extra Knowledge increase from Studying",
+    "cost": "2,800 Yen",
+    "obtained": "Bookstore on April 20th"
+  },
+  {
+    "book": "English Made Easy",
+    "series": "Status Parameter",
+    "chapters": "3",
+    "effect": "Extra Expression increase from Translating",
+    "cost": "3,200 Yen",
+    "obtained": "Bookstore on June 1st"
+  },
+  {
+    "book": "100 Ghost Stories",
+    "series": "Status Parameter",
+    "chapters": "3",
+    "effect": "Extra Courage increase from Janitor",
+    "cost": "3,400 Yen",
+    "obtained": "Bookstore on June 11th"
+  },
+  {
+    "book": "Office Work Manual",
+    "series": "Status Parameter",
+    "chapters": "3",
+    "effect": "Extra Diligence increase from Envelopes",
+    "cost": "2,800 Yen",
+    "obtained": "Bookstore on May 6th"
+  },
+  {
+    "book": "Easy Origami",
+    "series": "Status Parameter",
+    "chapters": "3",
+    "effect": "Extra Understanding increase from Folding",
+    "cost": "3,000 Yen",
+    "obtained": "Bookstore on June 1st"
+  },
+  {
+    "book": "Food Fight!",
+    "series": "N/A",
+    "chapters": "3",
+    "effect": "Extra stat increase from Aiya",
+    "cost": "4,200 Yen",
+    "obtained": "Bookstore on August 24th"
+  },
+  {
+    "book": "Beginner Fishing",
+    "series": "N/A",
+    "chapters": "3",
+    "effect": "Cast more lines when fishing",
+    "cost": "1,600 Yen",
+    "obtained": "Bookstore on April 20th"
+  },
+  {
+    "book": "Expert Fishing",
+    "series": "N/A",
+    "chapters": "3",
+    "effect": "Adds Triangle prompt when fishing",
+    "cost": "4,800 Yen",
+    "obtained": "Bookstore on June 28th"
+  },
+  {
+    "book": "Catching Bugs",
+    "series": "N/A",
+    "chapters": "3",
+    "effect": "Bigger yield from catching bugs",
+    "cost": "1,800 Yen",
+    "obtained": "Bookstore on June 11th"
+  },
+  {
+    "book": "World Class Bugs",
+    "series": "N/A",
+    "chapters": "3",
+    "effect": "Even bigger yield from catching bugs",
+    "cost": "4,800 Yen",
+    "obtained": "Bookstore on November 11th"
+  },
+  {
+    "book": "Home Gardening",
+    "series": "N/A",
+    "chapters": "3",
+    "effect": "Reduces time for plants to grow by one day",
+    "cost": "3,600 Yen",
+    "obtained": "Bookstore on July 15th"
+  },
+  {
+    "book": "Hyperspeed Reading",
+    "series": "N/A",
+    "chapters": "3",
+    "effect": "Read two chapters per day",
+    "cost": "9,800 Yen",
+    "obtained": "Bookstore on August 4th"
+  }
+]

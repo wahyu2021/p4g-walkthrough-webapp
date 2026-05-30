@@ -17,3 +17,4 @@
 - [Deep Linking & Dungeon Revamp](./tracks/deep-linking-refactor/index.md) - *Using URL slugs for Walkthrough months and redesigning the Dungeons page layout.*
 - [Today's Schedule Widget](./tracks/todays-schedule/index.md) - *Creating a smart widget to track the next uncompleted day.*
 - [Social Stats & Collection Tracker](./tracks/social-stats-tracker/index.md) - *Interactive tracker for Knowledge, Courage, etc., and Books/Quests.*
+- [Quests & Books Integration](./tracks/quests-books-integration/index.md) - *Scraping and integrating quests and books data into the Tracker page.*

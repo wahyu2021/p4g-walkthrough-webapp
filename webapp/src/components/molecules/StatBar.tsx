@@ -1,4 +1,3 @@
-import React from 'react';
 import { useProgress } from '../../hooks/useProgress';
 import type { SocialStats } from '../../context/ProgressContextInstance';
 

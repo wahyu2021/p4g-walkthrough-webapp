@@ -1,0 +1,144 @@
+[
+  {
+    "id": "sarasvati",
+    "name": "Sarasvati",
+    "arcana": "Priestess",
+    "level": 17,
+    "tier": "Early",
+    "description": "Excellent early game healer and support. Learns Invigorate 2 at level 19 for SP regeneration.",
+    "targetSkills": ["Invigorate 2", "Media", "Mabufu"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Fuse Slime (Fool) + Ukobach (Devil)",
+        "result": "Sarasvati (Priestess)",
+        "notes": "Inherit as much as you can, but focus on getting her to level 19 for Invigorate 2."
+      }
+    ]
+  },
+  {
+    "id": "rakshasa",
+    "name": "Rakshasa",
+    "arcana": "Strength",
+    "level": 23,
+    "tier": "Early",
+    "description": "Incredible physical damage dealer for the early game. Learns Brain Shake and Kill Rush.",
+    "targetSkills": ["Brain Shake", "Kill Rush", "Counter"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Fuse Ares (Chariot) + Principality (Justice)",
+        "result": "Rakshasa (Strength)",
+        "notes": "Try to inherit Auto-Sukukaja if possible to help with hit rates."
+      }
+    ]
+  },
+  {
+    "id": "black-frost",
+    "name": "Black Frost",
+    "arcana": "Fool",
+    "level": 38,
+    "tier": "Mid",
+    "description": "No weaknesses! Absorbs Ice and Fire, reflects Dark. Excellent mid-game magic user.",
+    "targetSkills": ["Agilao", "Bufula", "Mind Charge", "Invigorate 2"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Special Fusion: Jack Frost + Pyro Jack + King Frost + Pixie + Ghoul",
+        "result": "Black Frost (Fool)",
+        "notes": "Cross spread fusion. Can inherit Mind Charge to deal massive magic damage."
+      }
+    ]
+  },
+  {
+    "id": "ose",
+    "name": "Ose",
+    "arcana": "Fool",
+    "level": 31,
+    "tier": "Mid",
+    "description": "Great physical attacker with Power Charge.",
+    "targetSkills": ["Power Charge", "Atom Smasher", "Auto-Tarukaja"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Fuse Legion (Fool) + Obariyon (Fool) + Yomotsu-Shikome (Fool)",
+        "result": "Ose (Fool)",
+        "notes": "Triangle spread to create a stronger Fool persona. Inherit Power Charge."
+      }
+    ]
+  },
+  {
+    "id": "tam-lin",
+    "name": "Tam Lin",
+    "arcana": "Sun",
+    "level": 53,
+    "tier": "Late",
+    "description": "Incredible resistances and learns Auto-Maraku, Auto-Masuku, and Auto-Mataru (Tri-Auto).",
+    "targetSkills": ["Auto-Mataru", "Auto-Masuku", "Auto-Maraku", "Ziodyne", "Deathbound"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Special Fusion: Phoenix + Gdon + Yatagarasu + Narasimha",
+        "result": "Tam Lin (Sun)",
+        "notes": "Make sure the materials learn the Auto-Ma skills so Tam Lin can inherit them to become the ultimate starter Persona."
+      }
+    ]
+  },
+  {
+    "id": "trumpeter",
+    "name": "Trumpeter",
+    "arcana": "Judgment",
+    "level": 67,
+    "tier": "Late",
+    "description": "The master of debuffs and Almighty damage. Learns Debilitate and Megidolaon.",
+    "targetSkills": ["Debilitate", "Megidolaon", "Heat Riser", "Cool Breeze"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Special Fusion: Matador + White Rider + Daisoujou + Taotie + Pabilsag + Taown",
+        "result": "Trumpeter (Judgment)",
+        "notes": "Hexagon spread fusion. Unlocks after reaching max rank in Margaret's Social Link."
+      }
+    ]
+  },
+  {
+    "id": "yoshitsune",
+    "name": "Yoshitsune",
+    "arcana": "Tower",
+    "level": 75,
+    "tier": "End",
+    "description": "The strongest physical Persona in the game thanks to his exclusive skill, Hassou Tobi.",
+    "targetSkills": ["Hassou Tobi", "Power Charge", "Arms Master", "Repel Dark"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Level up Masakado (Tower) to level 73 to learn Arms Master.",
+        "result": "Prepared Masakado",
+        "notes": "Crucial for reducing Hassou Tobi's HP cost."
+      },
+      {
+        "step": 2,
+        "action": "Special Fusion: Hachiman + Masakado + Oukuninushi + Hitokoto-Nushi + Shiki-Ouji",
+        "result": "Yoshitsune (Tower)",
+        "notes": "Pentagon spread fusion. Requires December 17th or later."
+      }
+    ]
+  },
+  {
+    "id": "alice",
+    "name": "Alice",
+    "arcana": "Death",
+    "level": 72,
+    "tier": "End",
+    "description": "The best Dark magic user with her exclusive 'Die for Me!' skill.",
+    "targetSkills": ["Die for Me!", "Mudo Boost", "Megidolaon", "Mind Charge"],
+    "recipe": [
+      {
+        "step": 1,
+        "action": "Special Fusion: Belial (Death) + Nebiros (Death)",
+        "result": "Alice (Death)",
+        "notes": "Cross spread fusion. Can only be fused using these two specific Personas."
+      }
+    ]
+  }
+]

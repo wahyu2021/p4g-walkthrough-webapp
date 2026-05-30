@@ -39,9 +39,9 @@ export function AffinityBadge({ element, affinity }: AffinityBadgeProps) {
                         affinity === 'Repel' ? 'RP' : '-';
 
   return (
-    <div className={`flex flex-col items-center justify-center w-8 h-8 sm:w-9 sm:h-9 border ${border} ${bgColor} text-xs shrink-0`}>
-      <span className="text-[7px] uppercase font-black text-white/40 tracking-tighter leading-none mb-0.5">{element}</span>
-      <span className={`text-[10px] font-black uppercase tracking-tighter leading-none ${textColor}`}>{shortAffinity}</span>
+    <div className={`flex flex-col items-center justify-center aspect-square w-full min-h-[40px] max-h-[56px] border ${border} ${bgColor} text-xs shrink-0`}>
+      <span className="text-[8px] sm:text-[9px] uppercase font-black text-white/40 tracking-tighter leading-none mb-1">{element}</span>
+      <span className={`text-[11px] sm:text-xs font-black uppercase tracking-tighter leading-none ${textColor}`}>{shortAffinity}</span>
     </div>
   );
 }

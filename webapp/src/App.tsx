@@ -1,34 +1,26 @@
-import { useState, useMemo } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
-import { DayList } from './components/organisms/DayList';
-import { SearchInput } from './components/atoms/SearchInput';
+import { DungeonSelector } from './components/organisms/DungeonSelector';
+import { TodaysSchedule } from './components/organisms/TodaysSchedule';
 import { ScrollToTop } from './components/atoms/ScrollToTop';
 import { NavTabs } from './components/molecules/NavTabs';
 import { SocialLinksPage } from './pages/SocialLinksPage';
 import { DungeonsPage } from './pages/DungeonsPage';
 import { ExamsPage } from './pages/ExamsPage';
-import { getAvailableMonths, getWalkthroughData } from './utils/dataFetcher';
+import { TrackerPage } from './pages/TrackerPage';
+import { VelvetRoomPage } from './pages/VelvetRoomPage';
+import { WalkthroughView } from './components/templates/WalkthroughView';
+import { getAvailableMonths, getWalkthroughData, getDungeons } from './utils/dataFetcher';
 import { useProgress } from './hooks/useProgress';
 
 function App() {
   const location = useLocation();
   const availableMonths = getAvailableMonths();
   const allData = getWalkthroughData();
+  const dungeons = useMemo(() => getDungeons(), []);
   const { completedDays, resetProgress } = useProgress();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Default to the first month in the data (April)
-  const [activeMonth, setActiveMonth] = useState<string>(
-    availableMonths.length > 0 ? availableMonths[0].month : ''
-  );
-
-  // Filter days for the active month
-  const activeMonthData = useMemo(() => {
-    const foundMonth = allData.find(m => m.month === activeMonth);
-    return foundMonth ? foundMonth.days : [];
-  }, [allData, activeMonth]);
 
   // Calculate overall progress
   const totalDays = useMemo(() => {
@@ -45,6 +37,9 @@ function App() {
     return ((completedCount / totalDays) * 100).toFixed(2);
   }, [completedCount, totalDays]);
 
+  const isWalkthroughRoute = location.pathname === '/' || location.pathname.startsWith('/walkthrough');
+  const isDungeonsRoute = location.pathname.startsWith('/dungeons');
+
   const sidebarContent = (
     <div className="flex flex-col py-6 space-y-8">
       {/* Main Menu Section */}
@@ -59,19 +54,31 @@ function App() {
         </div>
       </section>
 
+      {/* Today's Schedule Widget (Global) */}
+      <section className="px-2">
+        <TodaysSchedule />
+      </section>
+
       {/* Timeline Section (Only for Walkthrough) */}
-      {location.pathname === '/' && (
+      {isWalkthroughRoute && (
         <section className="animate-in fade-in slide-in-from-left-4 duration-500">
           <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">
             Timeline
           </h3>
           <MonthSelector 
             months={availableMonths} 
-            activeMonth={activeMonth} 
-            onMonthSelect={(m) => {
-              setActiveMonth(m);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }} 
+          />
+        </section>
+      )}
+
+      {/* Dungeons Section (Only for Dungeons route) */}
+      {isDungeonsRoute && (
+        <section className="animate-in fade-in slide-in-from-left-4 duration-500">
+          <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">
+            Locations
+          </h3>
+          <DungeonSelector 
+            dungeons={dungeons} 
           />
         </section>
       )}
@@ -110,20 +117,16 @@ function App() {
       sidebar={sidebarContent}
     >
       <Routes>
-        <Route path="/" element={
-          <div className="flex flex-col space-y-6">
-            <div className="px-4">
-              <SearchInput value={searchQuery} onChange={setSearchQuery} />
-            </div>
-            
-            <div className="pb-10" key={activeMonth}>
-              <DayList days={activeMonthData} searchQuery={searchQuery} />
-            </div>
-          </div>
-        } />
+        <Route path="/" element={<Navigate to="/walkthrough/april" replace />} />
+        <Route path="/walkthrough" element={<Navigate to="/walkthrough/april" replace />} />
+        <Route path="/walkthrough/:monthSlug" element={<WalkthroughView />} />
+        
         <Route path="/social-links" element={<SocialLinksPage />} />
         <Route path="/dungeons" element={<DungeonsPage />} />
+        <Route path="/dungeons/:slug" element={<DungeonsPage />} />
         <Route path="/exams" element={<ExamsPage />} />
+        <Route path="/tracker" element={<TrackerPage />} />
+        <Route path="/velvet-room" element={<VelvetRoomPage />} />
       </Routes>
 
       <ScrollToTop />

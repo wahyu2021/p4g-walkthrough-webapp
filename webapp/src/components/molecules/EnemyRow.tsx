@@ -8,12 +8,12 @@ interface EnemyRowProps {
 
 export function EnemyRow({ enemy }: EnemyRowProps) {
   return (
-    <div className="flex flex-col p-3 bg-[#222] border-l-2 border-[#444] hover:border-p4-yellow hover:bg-[#2a2a2a] transition-colors group mb-1.5">
-      <div className="flex flex-col mb-3">
-        <h4 className="text-white font-black uppercase tracking-tight text-sm sm:text-base group-hover:text-p4-yellow transition-colors leading-tight">
+    <div className="flex flex-col p-4 sm:p-5 bg-[#222] border-l-4 border-[#444] hover:border-p4-yellow hover:bg-[#2a2a2a] transition-colors group mb-2 shadow-sm">
+      <div className="flex flex-col mb-4">
+        <h4 className="text-white font-black uppercase tracking-tight text-lg sm:text-xl group-hover:text-p4-yellow transition-colors leading-tight">
           {enemy.enemy}
         </h4>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] uppercase font-bold text-gray-400 mt-1">
+        <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs uppercase font-bold text-gray-400 mt-2">
           <span>Lv. <span className="text-white">{enemy.lv}</span></span>
           {enemy.hp && <span>HP <span className="text-white">{enemy.hp}</span></span>}
           {enemy.sp && <span>SP <span className="text-white">{enemy.sp}</span></span>}
@@ -21,7 +21,7 @@ export function EnemyRow({ enemy }: EnemyRowProps) {
         </div>
       </div>
       
-      <div className="grid grid-cols-7 gap-1 max-w-[300px]">
+      <div className="grid grid-cols-7 gap-1.5 sm:gap-2 max-w-lg">
         <AffinityBadge element="Phy" affinity={enemy.phy} />
         <AffinityBadge element="Fir" affinity={enemy.fir} />
         <AffinityBadge element="Ice" affinity={enemy.ice} />

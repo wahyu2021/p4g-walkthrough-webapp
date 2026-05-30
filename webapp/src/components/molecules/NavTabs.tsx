@@ -10,6 +10,8 @@ export function NavTabs({ isVertical = false }: NavTabsProps) {
     { id: '/social-links', label: 'Social Links' },
     { id: '/dungeons', label: 'Dungeons' },
     { id: '/exams', label: 'Exams' },
+    { id: '/tracker', label: 'Tracker' },
+    { id: '/velvet-room', label: 'Velvet Room' },
   ];
 
   return (

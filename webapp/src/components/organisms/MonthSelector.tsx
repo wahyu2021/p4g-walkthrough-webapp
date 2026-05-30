@@ -1,13 +1,12 @@
 import { useRef } from 'react';
+import { NavLink } from 'react-router-dom';
 import { MonthTab } from '../molecules/MonthTab';
 
 interface MonthSelectorProps {
   months: { month: string; month_num: number }[];
-  activeMonth: string;
-  onMonthSelect: (month: string) => void;
 }
 
-export function MonthSelector({ months, activeMonth, onMonthSelect }: MonthSelectorProps) {
+export function MonthSelector({ months }: MonthSelectorProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -25,13 +24,18 @@ export function MonthSelector({ months, activeMonth, onMonthSelect }: MonthSelec
     >
       <div className="flex flex-row md:flex-col space-x-6 md:space-x-0 md:space-y-4 w-max md:w-full mx-auto md:mx-0">
         {months.map((m) => (
-          <div key={m.month} className="md:w-full md:px-2">
-            <MonthTab
-              monthName={m.month}
-              isActive={activeMonth === m.month}
-              onClick={() => onMonthSelect(m.month)}
-            />
-          </div>
+          <NavLink 
+            key={m.month} 
+            to={`/walkthrough/${m.month}`}
+            className={({ isActive }) => `block md:w-full md:px-2 ${isActive ? 'active-month' : ''}`}
+          >
+            {({ isActive }) => (
+              <MonthTab
+                monthName={m.month}
+                isActive={isActive}
+              />
+            )}
+          </NavLink>
         ))}
       </div>
     </div>

@@ -23,9 +23,9 @@ Aplikasi panduan 100% completion Persona 4 Golden berbasis Web React dengan data
 - **Z-Index Isolate**: Perbaikan border SearchInput yang "tenggelam" dengan menggunakan CSS isolation.
 
 ## Draft Baru (Untuk Sesi Selanjutnya)
-1. **React Router Migration**: Migrasi arsitektur *routing* dari *conditional rendering* (React State) menjadi `react-router-dom` agar mendukung *deep linking* dan riwayat browser. [React Router Plan](./tracks/react-router-migration/plan.md)
+1. **Social Stats & Collection Tracker**: Membuat halaman baru (`/tracker`) yang memungkinkan pengguna melacak 5 Atribut Sosial utama (Knowledge, Courage, Diligence, Understanding, Expression) secara interaktif, yang tersimpan di LocalStorage. [Tracker Plan](./tracks/social-stats-tracker/plan.md)
 
 ## Langkah Selanjutnya (Backlog)
-- Implementasi widget "Today's Schedule" (Prioritas Hari Pertama yang Belum Selesai).
-- Social Stats & Collection Tracker.
+- Integrasi data Quest dan Books hasil scraping ke dalam halaman Tracker.
+- Dukungan Offline PWA.
 - Deployment ke Vercel/Netlify.

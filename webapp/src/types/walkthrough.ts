@@ -80,7 +80,7 @@ export interface Dungeon {
   order: number;
   deadline: string;
   dungeon_num: number;
-  status: string;
+  status?: string;
   floors_count: number;
   boss: { name: string; weaknesses: string[]; strategy: string } | null;
   bosses: DungeonBoss[];

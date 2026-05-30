@@ -1,7 +1,7 @@
 interface MonthTabProps {
   monthName: string;
   isActive: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export function MonthTab({ monthName, isActive, onClick }: MonthTabProps) {

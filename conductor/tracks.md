@@ -14,3 +14,6 @@
 - [Dungeon Scraper Upgrade](./tracks/dungeon-scraper-upgrade/index.md) - *Upgrading the Python scraper to extract full dungeon data.*
 - [Interactive Dungeon Guide](./tracks/interactive-dungeon-guide/index.md) - *Building a detailed UI for enemies, bosses, and loot.*
 - [React Router Migration](./tracks/react-router-migration/index.md) - *Migrating app navigation to react-router-dom.*
+- [Deep Linking & Dungeon Revamp](./tracks/deep-linking-refactor/index.md) - *Using URL slugs for Walkthrough months and redesigning the Dungeons page layout.*
+- [Today's Schedule Widget](./tracks/todays-schedule/index.md) - *Creating a smart widget to track the next uncompleted day.*
+- [Social Stats & Collection Tracker](./tracks/social-stats-tracker/index.md) - *Interactive tracker for Knowledge, Courage, etc., and Books/Quests.*

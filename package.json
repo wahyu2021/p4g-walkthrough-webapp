@@ -1,0 +1,25 @@
+{
+  "name": "p4g-walkthrough",
+  "version": "1.0.0",
+  "description": "> **100% Completion Guide** untuk Persona 4 Golden, dikonversi dari panduan legendaris [Hurricanehaon (GameFAQs)](https://gamefaqs.gamespot.com/vita/641695-persona-4-golden/faqs/76145) menjadi aplikasi web interaktif yang modern dan estetis.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix webapp\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wahyu2021/p4g-walkthrough-webapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/wahyu2021/p4g-walkthrough-webapp/issues"
+  },
+  "homepage": "https://github.com/wahyu2021/p4g-walkthrough-webapp#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}

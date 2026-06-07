@@ -1,17 +1,31 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { getDungeons } from '../utils/dataFetcher';
 import { DungeonDetail } from '../components/organisms/DungeonDetail';
+import type { Dungeon } from '../types/walkthrough';
 
 export function DungeonsPage() {
   const { slug } = useParams<{ slug?: string }>();
-  const dungeons = useMemo(() => getDungeons(), []);
+  
+  const [dungeons, setDungeons] = useState<Dungeon[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getDungeons().then(data => {
+      setDungeons(data);
+      setIsLoading(false);
+    });
+  }, []);
 
   // Use the slug to find the specific dungeon, or default to the first one if not found
   const activeDungeon = useMemo(() => {
-    if (!slug) return null;
+    if (!slug || dungeons.length === 0) return null;
     return dungeons.find(d => d.id === slug);
   }, [dungeons, slug]);
+
+  if (isLoading) {
+    return <div className="text-p4-yellow p-6 font-bold uppercase animate-pulse">Loading Dungeons...</div>;
+  }
 
   // If no slug is provided or it's an invalid slug, redirect to the first dungeon
   if (!slug || (!activeDungeon && dungeons.length > 0)) {

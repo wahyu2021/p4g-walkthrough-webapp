@@ -7,8 +7,8 @@ export interface ExamEntry {
   category: 'Lesson' | 'Exam';
 }
 
-export const extractExams = (): ExamEntry[] => {
-  const allData = getWalkthroughData();
+export const extractExams = async (): Promise<ExamEntry[]> => {
+  const allData = await getWalkthroughData();
   const exams: ExamEntry[] = [];
 
   allData.forEach((month) => {

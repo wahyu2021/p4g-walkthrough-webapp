@@ -1,9 +1,22 @@
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { getSocialLinks } from '../utils/dataFetcher';
 import { SocialLinkCard } from '../components/molecules/SocialLinkCard';
+import type { SocialLink } from '../types/walkthrough';
 
 export function SocialLinksPage() {
-  const socialLinks = useMemo(() => getSocialLinks(), []);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getSocialLinks().then(data => {
+      setSocialLinks(data);
+      setIsLoading(false);
+    });
+  }, []);
+
+  if (isLoading) {
+    return <div className="text-p4-yellow p-6 font-bold uppercase animate-pulse">Loading Social Links...</div>;
+  }
 
   return (
     <div className="flex flex-col space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

@@ -1,4 +1,4 @@
-import { useMemo, lazy, Suspense } from 'react';
+import { useMemo, lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
@@ -8,6 +8,7 @@ import { ScrollToTop } from './components/atoms/ScrollToTop';
 import { NavTabs } from './components/molecules/NavTabs';
 import { getAvailableMonths, getWalkthroughData, getDungeons } from './utils/dataFetcher';
 import { useProgress } from './hooks/useProgress';
+import type { WalkthroughMonth, Dungeon } from './types/walkthrough';
 
 // Lazy load pages for code splitting
 const WalkthroughView = lazy(() => import('./components/templates/WalkthroughView').then(module => ({ default: module.WalkthroughView })));
@@ -19,10 +20,25 @@ const VelvetRoomPage = lazy(() => import('./pages/VelvetRoomPage').then(module =
 
 function App() {
   const location = useLocation();
-  const availableMonths = getAvailableMonths();
-  const allData = getWalkthroughData();
-  const dungeons = useMemo(() => getDungeons(), []);
   const { completedDays, resetProgress } = useProgress();
+
+  const [availableMonths, setAvailableMonths] = useState<{ month: string; month_num: number }[]>([]);
+  const [allData, setAllData] = useState<WalkthroughMonth[]>([]);
+  const [dungeons, setDungeons] = useState<Dungeon[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      getAvailableMonths(),
+      getWalkthroughData(),
+      getDungeons()
+    ]).then(([months, data, dungs]) => {
+      setAvailableMonths(months);
+      setAllData(data);
+      setDungeons(dungs);
+      setIsLoading(false);
+    });
+  }, []);
 
   // Calculate overall progress
   const totalDays = useMemo(() => {
@@ -41,6 +57,14 @@ function App() {
 
   const isWalkthroughRoute = location.pathname === '/' || location.pathname.startsWith('/walkthrough');
   const isDungeonsRoute = location.pathname.startsWith('/dungeons');
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-p4-black text-p4-yellow font-bold uppercase tracking-widest animate-pulse">
+        Loading Data...
+      </div>
+    );
+  }
 
   const sidebarContent = (
     <div className="flex flex-col py-6 space-y-8">

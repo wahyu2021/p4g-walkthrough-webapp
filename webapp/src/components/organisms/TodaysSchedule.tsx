@@ -2,7 +2,15 @@ import { NavLink } from 'react-router-dom';
 import { useNextDay } from '../../hooks/useNextDay';
 
 export function TodaysSchedule() {
-  const { nextDay, monthSlug } = useNextDay();
+  const { nextDay, monthSlug, isLoading } = useNextDay();
+
+  if (isLoading) {
+    return (
+      <div className="bg-[#2a2a2a] border-l-4 border-p4-gray p-4 mb-4 shadow-[4px_4px_0px_0px_#111111] animate-pulse">
+        <h4 className="text-gray-500 font-black uppercase tracking-widest text-xs">Loading Schedule...</h4>
+      </div>
+    );
+  }
 
   if (!nextDay) {
     return (

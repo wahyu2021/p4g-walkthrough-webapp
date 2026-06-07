@@ -28,7 +28,9 @@ share/python-wheels/
 # =========================
 # Node / React WebApp (Vite)
 # =========================
+node_modules/
 webapp/node_modules/
+backend/node_modules/
 webapp/dist/
 webapp/dist-ssr/
 webapp/*.local

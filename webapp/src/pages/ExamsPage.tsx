@@ -1,11 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { extractExams } from '../utils/examExtractor';
+import type { ExamEntry } from '../utils/examExtractor';
 import { ExamCard } from '../components/molecules/ExamCard';
 import { SearchInput } from '../components/atoms/SearchInput';
 
 export function ExamsPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const allExams = useMemo(() => extractExams(), []);
+  const [allExams, setAllExams] = useState<ExamEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    extractExams().then(data => {
+      setAllExams(data);
+      setIsLoading(false);
+    });
+  }, []);
 
   const filteredExams = useMemo(() => {
     if (!searchQuery.trim()) return allExams;
@@ -16,6 +25,10 @@ export function ExamsPage() {
       exam.date.includes(query)
     );
   }, [allExams, searchQuery]);
+
+  if (isLoading) {
+    return <div className="text-p4-yellow p-6 font-bold uppercase animate-pulse">Loading Exams...</div>;
+  }
 
   return (
     <div className="flex flex-col space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

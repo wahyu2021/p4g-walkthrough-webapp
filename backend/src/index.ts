@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
 import authRouter from './routes/auth.js';
+import adminRouter from './routes/admin.js';
 import { connectDB } from './db.js';
 
 dotenv.config();
@@ -83,6 +84,9 @@ declare global {
 
 // Rute Autentikasi (Pendaftaran & Tiket Masuk)
 app.use('/api/auth', authRouter);
+
+// Rute Rahasia Panel Admin (Hanya untuk Admin, Dilindungi JWT)
+app.use('/api/admin', checkAuth, adminRouter);
 
 // Endpoint API Data
 app.get('/api/health', checkDB, (req, res) => {

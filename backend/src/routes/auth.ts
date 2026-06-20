@@ -11,13 +11,23 @@ const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-persona-4-golden';
 // ==========================================
 router.post('/register', async (req: Request, res: Response): Promise<any> => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Nama dan sandi wajib diisi.' });
+    const { username, password, inviteCode } = req.body;
+    if (!username || !password || !inviteCode) {
+      return res.status(400).json({ error: 'Nama, sandi, dan tiket undangan wajib diisi.' });
     }
 
     const db = await connectDB();
     const usersCollection = db.collection('users');
+    const invitesCollection = db.collection('invite_codes');
+
+    // Penjaga Gerbang (Gatekeeper): Cek Keaslian Tiket
+    const ticket = await invitesCollection.findOne({ code: inviteCode.toUpperCase() });
+    if (!ticket) {
+      return res.status(403).json({ error: 'Akses Ditolak: Tiket undangan palsu atau tidak dikenali.' });
+    }
+    if (ticket.isUsed) {
+      return res.status(403).json({ error: 'Akses Ditolak: Tiket ini sudah hangus (sudah dipakai orang lain).' });
+    }
 
     // Cek ketersediaan username
     const existingUser = await usersCollection.findOne({ username });
@@ -38,6 +48,13 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
     };
 
     const result = await usersCollection.insertOne(newUser);
+    
+    // Hanguskan tiket agar tidak bisa didaur ulang
+    await invitesCollection.updateOne(
+      { _id: ticket._id },
+      { $set: { isUsed: true, usedBy: username } }
+    );
+
     res.status(201).json({ message: 'Registrasi sukses', userId: result.insertedId });
   } catch (err) {
     res.status(500).json({ error: 'Terjadi kesalahan sistem.' });

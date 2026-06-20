@@ -148,6 +148,18 @@ app.get('/api/walkthrough', checkDB, async (req, res) => {
 });
 
 // ==========================================
+// SYSTEM PUBLIC CONFIG
+// ==========================================
+app.get('/api/announcement', checkDB, async (req, res) => {
+  try {
+    const data = await req.db.collection('system_config').findOne({ configId: 'global_announcement' });
+    res.json(data || { isActive: false });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch announcement' });
+  }
+});
+
+// ==========================================
 // USER PROGRESS ROUTES
 // ==========================================
 

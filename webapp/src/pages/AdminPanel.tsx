@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useProgress } from '../hooks/useProgress';
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertTriangle, Activity, Ticket as TicketIcon, Users } from 'lucide-react';
+import { AlertTriangle, Activity, Ticket as TicketIcon, Users, Megaphone, Trophy } from 'lucide-react';
 
-import type { Ticket, User, Metrics } from '../types/admin';
+import type { Ticket, User, Metrics, LeaderboardEntry } from '../types/admin';
 import { AdminMetrics } from '../components/organisms/admin/AdminMetrics';
 import { AdminTickets } from '../components/organisms/admin/AdminTickets';
 import { AdminUsers } from '../components/organisms/admin/AdminUsers';
+import { AdminAnnouncements } from '../components/organisms/admin/AdminAnnouncements';
+import { AdminLeaderboard } from '../components/organisms/admin/AdminLeaderboard';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
@@ -17,11 +19,12 @@ export function AdminPanel() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'users'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'users' | 'announcements' | 'leaderboard'>('overview');
 
   useEffect(() => {
     if (role !== 'admin') navigate('/');
@@ -43,6 +46,12 @@ export function AdminPanel() {
       if (uRes.ok) {
         const uData = await uRes.json();
         setUsers(uData.users || []);
+      }
+
+      const lRes = await fetch(`${API_BASE_URL}/admin/leaderboard`, { headers });
+      if (lRes.ok) {
+        const lData = await lRes.json();
+        setLeaderboard(lData.leaderboard || []);
       }
     } catch (err: any) { setErrorMsg('Gagal memuat data dari peladen.'); }
   };
@@ -109,7 +118,6 @@ export function AdminPanel() {
 
   return (
     <div className="min-h-screen bg-p4-black text-white relative overflow-hidden flex flex-col md:flex-row">
-      {/* Dynamic Background Pattern */}
       <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #111 25%, transparent 25%, transparent 75%, #111 75%, #111), repeating-linear-gradient(45deg, #111 25%, #222 25%, #222 75%, #111 75%, #111)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px' }}></div>
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-p4-yellow/10 to-transparent pointer-events-none mix-blend-overlay"></div>
 
@@ -127,6 +135,12 @@ export function AdminPanel() {
         <div className="flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible p-4 gap-2 flex-1 items-start md:items-stretch">
           <button onClick={() => setActiveTab('overview')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 md:shrink border-l-4 md:border-l-0 ${activeTab === 'overview' ? 'bg-p4-yellow text-p4-black md:border-l-4 md:border-p4-yellow border-transparent shadow-[4px_4px_0_0_#000]' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'}`}>
             <Activity className="w-4 h-4" /> Overview & Metrik
+          </button>
+          <button onClick={() => setActiveTab('announcements')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 md:shrink border-l-4 md:border-l-0 ${activeTab === 'announcements' ? 'bg-p4-yellow text-p4-black md:border-l-4 md:border-p4-yellow border-transparent shadow-[4px_4px_0_0_#000]' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'}`}>
+            <Megaphone className="w-4 h-4" /> Papan Pengumuman
+          </button>
+          <button onClick={() => setActiveTab('leaderboard')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 md:shrink border-l-4 md:border-l-0 ${activeTab === 'leaderboard' ? 'bg-p4-yellow text-p4-black md:border-l-4 md:border-p4-yellow border-transparent shadow-[4px_4px_0_0_#000]' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'}`}>
+            <Trophy className="w-4 h-4" /> Papan Peringkat
           </button>
           <button onClick={() => setActiveTab('tickets')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 md:shrink border-l-4 md:border-l-0 ${activeTab === 'tickets' ? 'bg-p4-yellow text-p4-black md:border-l-4 md:border-p4-yellow border-transparent shadow-[4px_4px_0_0_#000]' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'}`}>
             <TicketIcon className="w-4 h-4" /> Sistem Tiket
@@ -161,6 +175,18 @@ export function AdminPanel() {
 
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           {activeTab === 'overview' && <AdminMetrics metrics={metrics} />}
+
+          {activeTab === 'announcements' && (
+            <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
+              <AdminAnnouncements token={token || ''} baseUrl={API_BASE_URL} />
+            </div>
+          )}
+
+          {activeTab === 'leaderboard' && (
+            <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
+              <AdminLeaderboard data={leaderboard} />
+            </div>
+          )}
 
           {activeTab === 'tickets' && (
             <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">

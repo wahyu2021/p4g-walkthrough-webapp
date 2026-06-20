@@ -26,3 +26,15 @@ export type Metrics = {
   avgDays: number;
   chartData: Array<{ name: string; Pemain: number }>;
 };
+
+export type Announcement = {
+  message: string;
+  isActive: boolean;
+  type: 'info' | 'warning';
+};
+
+export type LeaderboardEntry = {
+  rank: number;
+  username: string;
+  daysCompleted: number;
+};

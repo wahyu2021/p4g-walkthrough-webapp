@@ -188,4 +188,52 @@ router.post('/users/reset-password', checkAdmin, async (req: Request, res: Respo
   }
 });
 
+// ==========================================
+// GLOBAL ANNOUNCEMENTS (Fase 5)
+// ==========================================
+router.post('/announcement', checkAdmin, async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { message, isActive, type } = req.body;
+    const db = await connectDB();
+    await db.collection('system_config').updateOne(
+      { configId: 'global_announcement' },
+      { $set: { message, isActive, type, updatedAt: new Date() } },
+      { upsert: true }
+    );
+    res.json({ message: 'Pengumuman berhasil disiarkan.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Gagal menyiarkan pengumuman.' });
+  }
+});
+
+// ==========================================
+// LEADERBOARD (Fase 6)
+// ==========================================
+router.get('/leaderboard', checkAdmin, async (req: Request, res: Response): Promise<any> => {
+  try {
+    const db = await connectDB();
+    const progressList = await db.collection('user_progress').find({}).toArray();
+    
+    // Urutkan berdasarkan jumlah hari tercentang
+    progressList.sort((a, b) => (b.checkedDays?.length || 0) - (a.checkedDays?.length || 0));
+
+    // Format data peringkat
+    const leaderboard = await Promise.all(progressList.map(async (p, idx) => {
+      // Hanya tampilkan top 100 agar query tidak berat
+      if (idx > 100) return null;
+      let user = null;
+      try { user = await db.collection('users').findOne({ _id: new ObjectId(p.userId) }); } catch(e){}
+      return {
+        rank: idx + 1,
+        username: user?.username || 'Unknown (Deleted)',
+        daysCompleted: p.checkedDays?.length || 0
+      };
+    }));
+
+    res.json({ leaderboard: leaderboard.filter(Boolean) });
+  } catch (err) {
+    res.status(500).json({ error: 'Gagal memuat papan peringkat.' });
+  }
+});
+
 export default router;

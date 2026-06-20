@@ -41,8 +41,8 @@ export function AdminMetrics({ metrics }: AdminMetricsProps) {
           <Activity className="w-5 h-5 text-p4-yellow" />
           Statistik Aktivitas Pemain (Penyelesaian Panduan)
         </h3>
-        <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="h-[250px] w-full min-h-[250px]">
+          <ResponsiveContainer width="100%" height={250} minHeight={250}>
             <BarChart data={metrics.chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
               <XAxis dataKey="name" stroke="#888" tick={{ fill: '#888', fontSize: 10 }} />

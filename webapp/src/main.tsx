@@ -4,12 +4,15 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { ProgressProvider } from './context/ProgressContext.tsx'
+import { UiProvider } from './context/UiContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <ProgressProvider>
-        <App />
+        <UiProvider>
+          <App />
+        </UiProvider>
       </ProgressProvider>
     </BrowserRouter>
   </StrictMode>,

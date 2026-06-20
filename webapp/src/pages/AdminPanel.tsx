@@ -9,12 +9,14 @@ import { AdminTickets } from '../components/organisms/admin/AdminTickets';
 import { AdminUsers } from '../components/organisms/admin/AdminUsers';
 import { AdminAnnouncements } from '../components/organisms/admin/AdminAnnouncements';
 import { AdminLeaderboard } from '../components/organisms/admin/AdminLeaderboard';
+import { useUi } from '../context/UiContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
 export function AdminPanel() {
   const { role, token } = useProgress();
   const navigate = useNavigate();
+  const { showToast, showConfirm } = useUi();
   
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -65,41 +67,66 @@ export function AdminPanel() {
     try {
       const res = await fetch(`${API_BASE_URL}/admin/invite/generate`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
       if (!res.ok) throw new Error('Gagal mencetak tiket baru');
-      await fetchData(); 
-    } catch (err: any) { setErrorMsg(err.message); } 
+      await fetchData();
+      showToast('Tiket berhasil dicetak!', 'success');
+    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); } 
     finally { setLoading(false); }
   };
 
   const revokeTicket = async (ticketId: string) => {
-    if (!window.confirm('Hancurkan tiket ini secara permanen?')) return;
+    const isConfirmed = await showConfirm({
+      title: 'Cabut Tiket',
+      message: 'Hancurkan tiket ini secara permanen?',
+      isDestructive: true,
+      confirmText: 'Hancurkan'
+    });
+    if (!isConfirmed) return;
+
     try {
       const res = await fetch(`${API_BASE_URL}/admin/invite/revoke`, {
         method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ ticketId })
       });
       if (!res.ok) throw new Error('Gagal menghanguskan tiket');
       await fetchData(); 
-    } catch (err: any) { setErrorMsg(err.message); }
+      showToast('Tiket berhasil dihancurkan.', 'success');
+    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
   };
 
   const purgeTickets = async () => {
-    if (!window.confirm('PERINGATAN: Lenyapkan seluruh tiket usang/hangus dari database secara permanen?')) return;
+    const isConfirmed = await showConfirm({
+      title: 'Pembersihan Massal',
+      message: 'PERINGATAN: Lenyapkan seluruh tiket usang/hangus dari database secara permanen?',
+      isDestructive: true,
+      confirmText: 'Lenyapkan'
+    });
+    if (!isConfirmed) return;
+
     try {
       const res = await fetch(`${API_BASE_URL}/admin/invite/purge`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       if (!res.ok) throw new Error('Gagal membersihkan tiket');
       await fetchData(); 
-    } catch (err: any) { setErrorMsg(err.message); }
+      showToast('Tiket usang berhasil dilenyapkan.', 'success');
+    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
   };
 
   const toggleSuspend = async (userId: string, currentStatus: string) => {
     const newStatus = currentStatus === 'suspended' ? 'active' : 'suspended';
-    if (!window.confirm(`Ubah status pengguna ini menjadi ${newStatus}?`)) return;
+    const isConfirmed = await showConfirm({
+      title: 'Ubah Status',
+      message: `Ubah status pengguna ini menjadi ${newStatus}?`,
+      isDestructive: newStatus === 'suspended',
+      confirmText: 'Ubah Status'
+    });
+    if (!isConfirmed) return;
+
     try {
       const res = await fetch(`${API_BASE_URL}/admin/users/suspend`, {
         method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ targetUserId: userId, newStatus })
       });
       if (!res.ok) throw new Error('Akses ditolak atau gagal mengubah status');
       await fetchData();
-    } catch (err: any) { setErrorMsg(err.message); }
+      showToast(`Status berhasil diubah menjadi ${newStatus}.`, 'success');
+    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
   };
 
   const resetPassword = async (userId: string) => {
@@ -110,8 +137,8 @@ export function AdminPanel() {
         method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ targetUserId: userId, newPassword: newPass })
       });
       if (!res.ok) throw new Error('Gagal me-reset kata sandi');
-      alert('Sandi berhasil diubah!');
-    } catch (err: any) { setErrorMsg(err.message); }
+      showToast('Sandi berhasil diubah!', 'success');
+    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
   };
 
   if (role !== 'admin') return null;

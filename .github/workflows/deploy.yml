@@ -54,6 +54,17 @@ jobs:
             # Restart PM2
             pm2 restart p4g-api || pm2 start dist/index.js --name 'p4g-api'
             
+            # 🩺 HEALTH CHECK: Beri waktu 3 detik untuk peladen booting
+            sleep 3
+            STATUS=$(pm2 jlist | jq -r '.[] | select(.name=="p4g-api") | .pm2_env.status')
+            if [ "$STATUS" != "online" ]; then
+              echo "❌ ERROR FATAL: BACKEND GAGAL START ATAU CRASH!"
+              echo "Sedang menampilkan log kerusakan:"
+              pm2 logs p4g-api --lines 40 --nostream
+              exit 1
+            fi
+            echo "✅ Backend berjalan dan sehat."
+            
             echo "========================================="
             echo "🎨 UPDATE FRONTEND (REACT VITE)"
             echo "========================================="

@@ -20,3 +20,4 @@
 - [Quests & Books Integration](./tracks/quests-books-integration/index.md) - *Scraping and integrating quests and books data into the Tracker page.*
 - [MongoDB Integration](./tracks/mongodb-integration/index.md) - *Migrating static JSON data and local storage to a persistent MongoDB database.*
 - [Vercel Deployment](./tracks/vercel-deployment/index.md) - *Deploying the frontend and backend to Vercel.*
+- [Security Enhancements](./tracks/security-enhancements/index.md) - *Hardening backend API against Brute Force, NoSQL Injection, and applying Nginx rate-limits/tuning.*

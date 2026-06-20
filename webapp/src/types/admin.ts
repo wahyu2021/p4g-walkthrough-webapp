@@ -40,5 +40,5 @@ export type Announcement = {
 export type LeaderboardEntry = {
   rank: number;
   username: string;
-  daysCompleted: number;
+  score: number;
 };

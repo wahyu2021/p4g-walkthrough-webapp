@@ -26,7 +26,7 @@ export function AdminLeaderboard({ data }: { data: LeaderboardEntry[] }) {
               </div>
             </div>
             <div className="text-right">
-              <span className="text-2xl font-black text-white">{user.daysCompleted}</span>
+              <span className="text-2xl font-black text-white">{user.score}</span>
               <span className="text-xs text-gray-400 uppercase tracking-widest ml-2">Hari Selesai</span>
             </div>
           </div>

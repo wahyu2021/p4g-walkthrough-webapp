@@ -204,6 +204,7 @@ app.post('/api/progress/:userId', progressLimiter, checkDB, checkAuth, async (re
 
 // Inisialisasi WebSocket (Socket.IO) untuk Megaphone Realtime
 const io = new Server(httpServer, {
+  path: '/api/socket.io',
   cors: { origin: allowedOrigins }
 });
 

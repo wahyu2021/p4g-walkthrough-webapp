@@ -215,7 +215,9 @@ function App() {
 
     // 2. Buka koneksi WebSocket untuk pendengar Real-time
     const socketUrl = API_BASE_URL.replace('/api', '');
-    const socket = io(socketUrl);
+    const socket = io(socketUrl, {
+      path: '/api/socket.io'
+    });
 
     socket.on('new_announcement', (data) => {
       if (data && data.isActive) {

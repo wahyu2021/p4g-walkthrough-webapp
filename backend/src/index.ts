@@ -2,6 +2,9 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import rateLimit from 'express-rate-limit';
 import { connectDB } from './db.js';
 
 dotenv.config();
@@ -14,8 +17,11 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
   : ['http://localhost:5173'];
 
+// Security Middlewares
+app.use(helmet());
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
+app.use(mongoSanitize());
 
 // ==========================================
 // Middleware untuk mengecek koneksi DB
@@ -40,6 +46,17 @@ const checkAuth = (req: Request, res: Response, next: express.NextFunction) => {
   }
   next();
 };
+
+// ==========================================
+// Security Rate Limiter (Brute Force Protection)
+// ==========================================
+const progressLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 menit
+  max: 20, // Maksimal 20 request per IP dalam 5 menit
+  message: { status: 'error', error: 'Terlalu banyak permintaan simpan progress, coba lagi dalam 5 menit.' },
+  standardHeaders: true, 
+  legacyHeaders: false,
+});
 
 // Deklarasi custom type untuk menambahkan 'db' ke dalam Request object Express
 declare global {
@@ -132,8 +149,8 @@ app.get('/api/progress/:userId', checkDB, async (req, res) => {
   }
 });
 
-// Update/Save Progress User (Terlindungi Password)
-app.post('/api/progress/:userId', checkDB, checkAuth, async (req, res) => {
+// Update/Save Progress User (Terlindungi Password & Rate Limiter)
+app.post('/api/progress/:userId', progressLimiter, checkDB, checkAuth, async (req, res) => {
   try {
     const { userId } = req.params;
     const updateData = req.body; // Data progress (checkedDays, dll)

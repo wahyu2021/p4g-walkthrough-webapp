@@ -122,8 +122,13 @@ router.get('/metrics', checkAdmin, async (req: Request, res: Response): Promise<
       Pemain: distribution[key as keyof typeof distribution]
     }));
 
+    // Tambahan metrik baru
+    const suspendedUsers = await db.collection('users').countDocuments({ status: 'suspended' });
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const activeToday = await db.collection('users').countDocuments({ lastLoginAt: { $gte: oneDayAgo } });
+
     res.json({
-      totalUsers, totalTickets, activeTickets, usedTickets, avgDays, chartData
+      totalUsers, totalTickets, activeTickets, usedTickets, avgDays, suspendedUsers, activeToday, chartData
     });
   } catch (err) {
     res.status(500).json({ error: 'Gagal memuat metrik.' });

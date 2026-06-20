@@ -24,6 +24,8 @@ export type Metrics = {
   activeTickets: number;
   usedTickets: number;
   avgDays: number;
+  suspendedUsers: number;
+  activeToday: number;
   chartData: Array<{ name: string; Pemain: number }>;
 };
 

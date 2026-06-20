@@ -1,4 +1,4 @@
-import { Users, Ticket as TicketIcon, TicketX, Activity } from 'lucide-react';
+import { Users, Ticket as TicketIcon, TicketX, Activity, UserCheck, UserX } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import type { Metrics } from '../../../types/admin';
 
@@ -9,12 +9,24 @@ export function AdminMetrics({ metrics }: AdminMetricsProps) {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 skew-x-[-2deg]">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8 skew-x-[-2deg]">
         <div className="bg-[#1a1a1a] border border-p4-yellow/30 p-4 border-l-4 border-l-p4-yellow flex flex-col items-center justify-center relative overflow-hidden group">
           <div className="absolute -right-4 -top-4 w-16 h-16 bg-p4-yellow/5 rounded-full group-hover:scale-150 transition-transform"></div>
           <Users className="w-8 h-8 text-p4-yellow opacity-50 mb-2 group-hover:opacity-100 transition-opacity" />
           <span className="text-gray-400 text-[10px] uppercase tracking-widest font-bold mb-1">Populasi Pengguna</span>
           <span className="text-3xl font-black text-white">{metrics.totalUsers}</span>
+        </div>
+        <div className="bg-[#1a1a1a] border border-cyan-500/30 p-4 border-l-4 border-l-cyan-500 flex flex-col items-center justify-center relative overflow-hidden group">
+          <div className="absolute -right-4 -top-4 w-16 h-16 bg-cyan-500/5 rounded-full group-hover:scale-150 transition-transform"></div>
+          <UserCheck className="w-8 h-8 text-cyan-500 opacity-50 mb-2 group-hover:opacity-100 transition-opacity" />
+          <span className="text-gray-400 text-[10px] uppercase tracking-widest font-bold mb-1">Pengunjung Hari Ini</span>
+          <span className="text-3xl font-black text-white">{metrics.activeToday}</span>
+        </div>
+        <div className="bg-[#1a1a1a] border border-orange-500/30 p-4 border-l-4 border-l-orange-500 flex flex-col items-center justify-center relative overflow-hidden group">
+          <div className="absolute -right-4 -top-4 w-16 h-16 bg-orange-500/5 rounded-full group-hover:scale-150 transition-transform"></div>
+          <UserX className="w-8 h-8 text-orange-500 opacity-50 mb-2 group-hover:opacity-100 transition-opacity" />
+          <span className="text-gray-400 text-[10px] uppercase tracking-widest font-bold mb-1">Akun Dibekukan</span>
+          <span className="text-3xl font-black text-white">{metrics.suspendedUsers}</span>
         </div>
         <div className="bg-[#1a1a1a] border border-blue-500/30 p-4 border-l-4 border-l-blue-500 flex flex-col items-center justify-center relative overflow-hidden group">
           <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/5 rounded-full group-hover:scale-150 transition-transform"></div>

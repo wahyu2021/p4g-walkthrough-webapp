@@ -1,6 +1,7 @@
 import type { WalkthroughMonth, SocialLink, Dungeon } from '../types/walkthrough';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// Gunakan URL API spesifik jika sedang di lokal, atau relative path '/api' saat di production
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
 export const getWalkthroughData = async (): Promise<WalkthroughMonth[]> => {
   const response = await fetch(`${API_BASE_URL}/walkthrough`);

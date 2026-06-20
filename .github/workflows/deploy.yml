@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2 # Fetch the last 2 commits to determine changed files
 
       - name: Execute remote ssh commands using ssh key
         uses: appleboy/ssh-action@v1.0.3
@@ -22,53 +20,49 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            # Pastikan environment PATH terbaca agar command npm dan pm2 dikenali
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin
+            
+            echo "========================================="
+            echo "🚀 MEMULAI DEPLOYMENT KE PRODUCTION 🚀"
+            echo "========================================="
+            
             # Pindah ke direktori project
             cd /var/www/p4g-webapp
             
-            echo "📦 Mengambil pembaruan terbaru dari GitHub..."
-            # Cek daftar file yang berubah sebelum pull
-            git fetch origin main
-            CHANGED_FILES=$(git diff --name-only HEAD origin/main)
-            echo "File yang berubah:"
-            echo "$CHANGED_FILES"
-            
-            # Tarik kode terbaru
+            echo "📦 Menarik kode terbaru dari GitHub..."
+            # Reset hard untuk mencegah konflik file lokal
+            git fetch --all
+            git reset --hard origin/main
             git pull origin main
 
-            # ============================================
-            # Update Backend (jika ada perubahan)
-            # ============================================
-            if echo "$CHANGED_FILES" | grep -q "^backend/"; then
-              echo "🔧 Perubahan di backend terdeteksi, memulai proses rebuild..."
-              cd /var/www/p4g-webapp/backend
-              npm install
-              npm run build
-              pm2 restart p4g-api
-              echo "✅ Backend berhasil dibangun ulang dan direstart."
-            else
-              echo "⏭️ Tidak ada perubahan di backend, melewati proses rebuild backend."
+            echo "========================================="
+            echo "🔧 UPDATE BACKEND (EXPRESS API)"
+            echo "========================================="
+            cd /var/www/p4g-webapp/backend
+            npm install
+            npm run build
+            
+            # Restart PM2
+            pm2 restart p4g-api || pm2 start dist/index.js --name 'p4g-api'
+            
+            echo "========================================="
+            echo "🎨 UPDATE FRONTEND (REACT VITE)"
+            echo "========================================="
+            cd /var/www/p4g-webapp/webapp
+            
+            # Pastikan .env.production selalu ada
+            if [ ! -f .env.production ]; then
+              echo "VITE_API_URL=https://p4g.simpatik.web.id/api" > .env.production
             fi
 
-            # ============================================
-            # Update Webapp/Frontend (jika ada perubahan)
-            # ============================================
-            if echo "$CHANGED_FILES" | grep -q "^webapp/"; then
-              echo "🎨 Perubahan di webapp terdeteksi, memulai proses rebuild..."
-              cd /var/www/p4g-webapp/webapp
-              
-              # Pastikan .env.production selalu ada
-              if [ ! -f .env.production ]; then
-                echo "VITE_API_URL=https://p4g.simpatik.web.id/api" > .env.production
-              fi
-
-              npm install
-              npm run build
-              echo "✅ Webapp berhasil dibangun ulang."
-            else
-              echo "⏭️ Tidak ada perubahan di webapp, melewati proses rebuild webapp."
-            fi
-
-            echo "========================================"
-            echo "✅ Proses Deployment Selesai!"
-            echo "========================================"
+            npm install
+            npm run build
+            
+            # Simpan state PM2
+            pm2 save
+            
+            echo "========================================="
+            echo "✅ PROSES DEPLOYMENT SELESAI DENGAN SUKSES!"
+            echo "========================================="
             pm2 status

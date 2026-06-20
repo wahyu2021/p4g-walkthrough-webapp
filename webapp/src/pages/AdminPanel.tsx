@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useProgress } from '../hooks/useProgress';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AlertTriangle, Activity, Ticket as TicketIcon, Users, Megaphone, Trophy } from 'lucide-react';
 
 import type { Ticket, User, Metrics, LeaderboardEntry } from '../types/admin';
@@ -26,7 +26,9 @@ export function AdminPanel() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'users' | 'announcements' | 'leaderboard'>('overview');
+  const location = useLocation();
+  // Mengambil segmen terakhir dari URL /admin/xxx, default ke 'overview'
+  const activeTab = location.pathname.split('/').pop() === 'admin' ? 'overview' : location.pathname.split('/').pop() || 'overview';
 
   useEffect(() => {
     if (role !== 'admin') navigate('/');
@@ -160,21 +162,21 @@ export function AdminPanel() {
         </div>
 
         <div className="flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible p-4 gap-2 flex-1 items-start md:items-stretch">
-          <button onClick={() => setActiveTab('overview')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'overview' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
+          <Link to="/admin/overview" className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'overview' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
             <Activity className="w-4 h-4" /> Overview & Metrik
-          </button>
-          <button onClick={() => setActiveTab('announcements')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'announcements' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
+          </Link>
+          <Link to="/admin/announcements" className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'announcements' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
             <Megaphone className="w-4 h-4" /> Papan Pengumuman
-          </button>
-          <button onClick={() => setActiveTab('leaderboard')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'leaderboard' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
+          </Link>
+          <Link to="/admin/leaderboard" className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'leaderboard' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
             <Trophy className="w-4 h-4" /> Papan Peringkat
-          </button>
-          <button onClick={() => setActiveTab('tickets')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'tickets' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
+          </Link>
+          <Link to="/admin/tickets" className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'tickets' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
             <TicketIcon className="w-4 h-4" /> Sistem Tiket
-          </button>
-          <button onClick={() => setActiveTab('users')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'users' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
+          </Link>
+          <Link to="/admin/users" className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 border-l-4 ${activeTab === 'users' ? 'bg-p4-yellow text-p4-black border-p4-yellow shadow-[4px_4px_0_0_#000]' : 'text-gray-400 border-transparent hover:bg-white/5 hover:text-white hover:border-gray-600'}`}>
             <Users className="w-4 h-4" /> Manajemen Pengguna
-          </button>
+          </Link>
         </div>
 
         <div className="p-4 border-t border-gray-800 mt-auto hidden md:block">

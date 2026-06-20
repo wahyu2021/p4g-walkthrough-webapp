@@ -181,7 +181,7 @@ function App() {
 
         {/* Rute Admin Eksklusif */}
         <Route element={<AdminRoute />}>
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/admin/*" element={<AdminPanel />} />
         </Route>
 
         {/* Rute Berpelindung (Main App) */}

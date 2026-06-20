@@ -1,5 +1,5 @@
 import { useMemo, lazy, Suspense, useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
 import { AlertTriangle, Info } from 'lucide-react';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
@@ -218,9 +218,7 @@ function App() {
           {announcement.message}
         </div>
       )}
-      <Router>
-        <AppContent />
-      </Router>
+      <AppContent />
     </>
   );
 }

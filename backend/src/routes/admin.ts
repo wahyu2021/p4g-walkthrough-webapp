@@ -146,7 +146,7 @@ router.get('/users', checkAdmin, async (req: Request, res: Response): Promise<an
       {
         $lookup: {
           from: 'user_progress',
-          localField: '_id',
+          localField: 'username',
           foreignField: 'userId',
           as: 'progressData'
         }
@@ -269,7 +269,7 @@ router.get('/leaderboard', checkAdmin, async (req: Request, res: Response): Prom
       // Hanya tampilkan top 100 agar query tidak berat
       if (idx > 100) return null;
       let user = null;
-      try { user = await db.collection('users').findOne({ _id: new ObjectId(p.userId) }); } catch(e){}
+      try { user = await db.collection('users').findOne({ username: p.userId }); } catch(e){}
       return {
         rank: idx + 1,
         username: user?.username || 'Unknown (Deleted)',

@@ -77,8 +77,10 @@ router.post('/login', async (req: Request, res: Response): Promise<any> => {
     
     const db = await connectDB();
     const usersCollection = db.collection('users');
-
-    const user = await usersCollection.findOne({ username });
+    // Sanitasi spasi dan cari berdasarkan regex kebal huruf besar/kecil (Case-Insensitive)
+    const cleanUsername = username.trim();
+    const user = await usersCollection.findOne({ username: { $regex: new RegExp(`^${cleanUsername}$`, 'i') } });
+    
     if (!user) {
       return res.status(401).json({ error: 'Akses Ditolak: Nama atau sandi salah.' });
     }

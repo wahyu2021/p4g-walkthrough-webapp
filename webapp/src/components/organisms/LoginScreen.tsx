@@ -56,9 +56,10 @@ export function LoginScreen() {
         setInviteCode('');
         showToast('Registrasi sukses! Silakan masuk dengan kata sandi barumu.', 'success');
       }
-    } catch (err: any) {
-      setErrorMsg(err.message);
-      showToast(err.message, 'error');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan sistem.';
+      setErrorMsg(message);
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
@@ -73,13 +74,13 @@ export function LoginScreen() {
           {mode === 'login' ? 'System Login' : 'New Identity'}
         </h1>
         <p className="text-p4-black text-xs md:text-sm font-black tracking-widest uppercase mb-12 bg-p4-yellow px-4 py-1 skew-x-[-10deg] shadow-sm">
-          {mode === 'login' ? 'Enter your credentials' : 'Register with invite ticket'}
+          {mode === 'login' ? 'Enter your account' : 'Register with invite ticket'}
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col w-full animate-in slide-in-from-bottom-8 duration-500">
-          <div className="bg-[#2a2a2a] p-6 border-l-4 border-p4-yellow shadow-[6px_6px_0_0_#000] skew-x-[-3deg] relative flex flex-col gap-4">
+          <div className="bg-[#2a2a2a] p-6 border-l-4 border-p4-yellow shadow-[6px_6px_0_0_#000] -skew-x-3 relative flex flex-col gap-4">
             
-            <div className="flex flex-col skew-x-[3deg]">
+            <div className="flex flex-col skew-x-3">
               <label className="text-p4-yellow text-xs font-black tracking-widest uppercase mb-1">Character Name</label>
               <input
                 ref={inputRef}
@@ -88,11 +89,14 @@ export function LoginScreen() {
                 onChange={(e) => setUsername(e.target.value)}
                 className="bg-p4-black text-white px-3 py-2 font-bold border-2 border-p4-gray focus:outline-none focus:border-p4-yellow transition-colors"
                 placeholder="Name"
+                autoCapitalize="none"
+                autoComplete="off"
+                spellCheck={false}
                 required
               />
             </div>
 
-            <div className="flex flex-col skew-x-[3deg]">
+            <div className="flex flex-col skew-x-3">
               <label className="text-p4-yellow text-xs font-black tracking-widest uppercase mb-1">Password</label>
               <input
                 type="password"
@@ -105,7 +109,7 @@ export function LoginScreen() {
             </div>
 
             {mode === 'register' && (
-              <div className="flex flex-col skew-x-[3deg] animate-in fade-in slide-in-from-top-2">
+              <div className="flex flex-col skew-x-3 animate-in fade-in slide-in-from-top-2">
                 <label className="text-p4-yellow text-xs font-black tracking-widest uppercase mb-1">Invite Ticket</label>
                 <input
                   type="text"
@@ -119,7 +123,7 @@ export function LoginScreen() {
             )}
 
             {errorMsg && (
-              <p className="text-red-500 text-[11px] font-bold uppercase tracking-widest skew-x-[3deg] bg-red-950/50 p-2 border border-red-500">
+              <p className="text-red-500 text-[11px] font-bold uppercase tracking-widest skew-x-3 bg-red-950/50 p-2 border border-red-500">
                 {errorMsg}
               </p>
             )}
@@ -127,7 +131,7 @@ export function LoginScreen() {
             <button 
               type="submit" 
               disabled={loading}
-              className="mt-4 bg-p4-yellow hover:bg-white text-p4-black px-4 py-3 font-black text-lg skew-x-[3deg] transition-colors border-2 border-p4-black disabled:opacity-50"
+              className="mt-4 bg-p4-yellow hover:bg-white text-p4-black px-4 py-3 font-black text-lg skew-x-3 transition-colors border-2 border-p4-black disabled:opacity-50"
             >
               {loading ? 'PROCESSING...' : (mode === 'login' ? 'ACCESS SYSTEM' : 'REGISTER')}
             </button>
@@ -138,7 +142,7 @@ export function LoginScreen() {
                 setMode(mode === 'login' ? 'register' : 'login');
                 setErrorMsg('');
               }}
-              className="text-white/70 hover:text-p4-yellow text-[10px] font-bold uppercase tracking-widest skew-x-[3deg] transition-colors mt-2 underline text-center cursor-pointer"
+              className="text-white/70 hover:text-p4-yellow text-[10px] font-bold uppercase tracking-widest skew-x-3 transition-colors mt-2 underline text-center cursor-pointer"
             >
               {mode === 'login' ? 'No account? Use Invite Ticket' : 'Already have account? Login'}
             </button>

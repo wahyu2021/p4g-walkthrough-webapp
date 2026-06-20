@@ -45,7 +45,7 @@ export function LoginScreen() {
 
       if (mode === 'login') {
         // Eksekusi Context Login (menyimpan userId, token, dan role)
-        login(data.user.id, data.token, data.user.role);
+        login(data.user.username, data.token, data.user.role);
       } else {
         // Jika sukses register, arahkan otomatis ke mode login
         setMode('login');

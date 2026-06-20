@@ -83,16 +83,16 @@ export function AdminPanel() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 bg-white/5 backdrop-blur-md p-6 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] skew-x-[-3deg] hover:-translate-y-1 transition-transform duration-300">
           <div className="skew-x-[3deg]">
             <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-p4-yellow to-white uppercase tracking-widest drop-shadow-[2px_2px_0_#000]">
-              Command Center
+              Admin Panel
             </h1>
             <p className="text-gray-300 text-xs md:text-sm font-bold tracking-[0.3em] uppercase mt-2 border-b border-gray-500/30 pb-2 inline-block">
-              Secure Ticketing Network
+              Sistem Pembuat Kode Undangan
             </p>
           </div>
           <Link to="/" className="mt-6 md:mt-0 group relative px-6 py-3 bg-p4-black border-2 border-p4-yellow skew-x-[3deg] overflow-hidden flex items-center justify-center transition-all hover:scale-105">
             <span className="absolute inset-0 bg-p4-yellow transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
             <span className="relative text-p4-yellow group-hover:text-p4-black font-black uppercase tracking-widest text-sm z-10 transition-colors">
-              Return to Grid
+              Kembali ke Beranda
             </span>
           </Link>
         </div>
@@ -105,9 +105,9 @@ export function AdminPanel() {
             <div>
               <h2 className="text-2xl font-black text-white uppercase tracking-widest flex items-center gap-3">
                 <span className="w-3 h-3 bg-p4-yellow inline-block animate-pulse"></span>
-                Master Ticket Registry
+                Daftar Tiket Undangan
               </h2>
-              <p className="text-gray-300 text-xs font-mono uppercase tracking-widest mt-1">Total Minted: {tickets.length}</p>
+              <p className="text-gray-300 text-xs font-mono uppercase tracking-widest mt-1">Total Dicetak: {tickets.length}</p>
             </div>
             
             <button 
@@ -116,7 +116,7 @@ export function AdminPanel() {
               className="mt-6 md:mt-0 relative px-6 py-3 bg-p4-yellow text-p4-black font-black uppercase tracking-widest hover:bg-white hover:shadow-[0_0_15px_rgba(255,235,59,0.6)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               <div className="absolute inset-0 border border-p4-yellow scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300"></div>
-              {loading ? 'Processing...' : '+ Mint New Ticket'}
+              {loading ? 'Memproses...' : '+ Buat Tiket Baru'}
             </button>
           </div>
 
@@ -132,7 +132,7 @@ export function AdminPanel() {
           <div className="skew-x-[2deg] grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {tickets.length === 0 ? (
               <div className="col-span-full p-12 text-center border-2 border-dashed border-gray-500/50 text-gray-300 uppercase tracking-widest font-black text-lg">
-                No tickets established in the network.
+                Belum ada tiket yang dibuat.
               </div>
             ) : (
               tickets.map((t, idx) => (
@@ -153,7 +153,7 @@ export function AdminPanel() {
                     <span className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${
                       t.isUsed ? 'bg-red-500 text-white' : 'bg-p4-yellow text-p4-black shadow-[0_0_10px_rgba(255,235,59,0.3)]'
                     }`}>
-                      {t.isUsed ? 'Consumed' : 'Ready'}
+                      {t.isUsed ? 'Hangus' : 'Aktif'}
                     </span>
                   </div>
 
@@ -169,13 +169,13 @@ export function AdminPanel() {
                   <div className="mt-auto pt-3 border-t border-white/10 flex justify-between items-end min-h-[40px]">
                     {t.isUsed ? (
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Bound to:</span>
+                        <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Digunakan oleh:</span>
                         <span className="text-red-400 font-black uppercase tracking-widest text-sm">{t.usedBy}</span>
                       </div>
                     ) : (
                       <div className="flex-1 text-center">
                         <span className={`text-xs font-black tracking-widest uppercase transition-colors ${copiedId === t._id ? 'text-green-400' : 'text-gray-400 group-hover:text-p4-yellow'}`}>
-                          {copiedId === t._id ? '✓ Copied' : 'Click to Copy'}
+                          {copiedId === t._id ? '✓ Tersalin' : 'Klik untuk Salin'}
                         </span>
                       </div>
                     )}

@@ -92,6 +92,21 @@ router.post('/login', async (req: Request, res: Response): Promise<any> => {
 
     const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: '30d' });
 
+    // Rekam Jejak Pengunjung (Audit Keamanan)
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown';
+    const userAgent = req.headers['user-agent'] || 'Unknown Browser';
+
+    await usersCollection.updateOne(
+      { _id: user._id },
+      { 
+        $set: { 
+          lastLoginAt: new Date(),
+          lastIp: clientIp,
+          lastUserAgent: userAgent
+        } 
+      }
+    );
+
     res.json({ message: 'Login sukses', token, user: payload });
   } catch (err) {
     res.status(500).json({ error: 'Terjadi kesalahan saat masuk.' });

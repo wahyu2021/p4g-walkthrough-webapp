@@ -13,6 +13,9 @@ export type User = {
   role: string;
   status?: string;
   createdAt?: string;
+  lastLoginAt?: string;
+  lastIp?: string;
+  lastUserAgent?: string;
 };
 
 export type Metrics = {

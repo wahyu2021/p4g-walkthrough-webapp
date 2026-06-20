@@ -1,5 +1,6 @@
 import { useMemo, lazy, Suspense, useState, useEffect } from 'react';
-import { Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
+import { AlertTriangle, Info } from 'lucide-react';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
 import { DungeonSelector } from './components/organisms/DungeonSelector';
@@ -20,7 +21,7 @@ const ExamsPage = lazy(() => import('./pages/ExamsPage').then(module => ({ defau
 const TrackerPage = lazy(() => import('./pages/TrackerPage').then(module => ({ default: module.TrackerPage })));
 const VelvetRoomPage = lazy(() => import('./pages/VelvetRoomPage').then(module => ({ default: module.VelvetRoomPage })));
 
-function App() {
+function AppContent() {
   const location = useLocation();
   const { userId, role, logout, completedDays, resetProgress } = useProgress();
 
@@ -194,6 +195,33 @@ function App() {
 
       <ScrollToTop />
     </MainLayout>
+  );
+}
+
+function App() {
+  const [announcement, setAnnouncement] = useState<{message: string, type: string, isActive: boolean} | null>(null);
+
+  useEffect(() => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
+    fetch(`${API_BASE_URL}/announcement`)
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.isActive) setAnnouncement(d);
+      }).catch(e => console.error(e));
+  }, []);
+
+  return (
+    <>
+      {announcement && announcement.isActive && (
+        <div className={`w-full p-2 text-center text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 animate-pulse z-50 relative ${announcement.type === 'warning' ? 'bg-red-600 text-white' : 'bg-p4-yellow text-p4-black'}`}>
+          {announcement.type === 'warning' ? <AlertTriangle className="w-4 h-4" /> : <Info className="w-4 h-4" />}
+          {announcement.message}
+        </div>
+      )}
+      <Router>
+        <AppContent />
+      </Router>
+    </>
   );
 }
 

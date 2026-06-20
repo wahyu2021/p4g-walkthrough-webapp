@@ -1,11 +1,22 @@
-import { Users, Ticket as TicketIcon, TicketX, Activity, UserCheck, UserX } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { Users, Ticket as TicketIcon, TicketX, Activity, UserCheck, UserX, PieChart as PieChartIcon } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 import type { Metrics } from '../../../types/admin';
 
 type AdminMetricsProps = { metrics: Metrics | null };
 
 export function AdminMetrics({ metrics }: AdminMetricsProps) {
   if (!metrics) return null;
+
+  // Data olahan untuk Pie Chart
+  const ticketData = [
+    { name: 'Tersedia', value: metrics.activeTickets, color: '#3b82f6' },
+    { name: 'Hangus', value: metrics.usedTickets, color: '#ef4444' }
+  ];
+
+  const userData = [
+    { name: 'Akun Aktif', value: metrics.totalUsers - metrics.suspendedUsers, color: '#10b981' },
+    { name: 'Dibekukan', value: metrics.suspendedUsers, color: '#f97316' }
+  ];
 
   return (
     <div className="w-full">
@@ -48,25 +59,77 @@ export function AdminMetrics({ metrics }: AdminMetricsProps) {
         </div>
       </div>
 
-      <div className="bg-[#1a1a1a] p-6 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] skew-x-[-2deg] mb-8">
-        <h3 className="text-white uppercase tracking-widest font-black mb-6 flex items-center gap-2">
-          <Activity className="w-5 h-5 text-p4-yellow" />
-          Statistik Aktivitas Pemain (Penyelesaian Panduan)
-        </h3>
-        <div className="h-[250px] w-full min-h-[250px]">
-          <ResponsiveContainer width="100%" height={250} minHeight={250}>
-            <BarChart data={metrics.chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
-              <XAxis dataKey="name" stroke="#888" tick={{ fill: '#888', fontSize: 10 }} />
-              <YAxis stroke="#888" tick={{ fill: '#888', fontSize: 10 }} allowDecimals={false} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#111', borderColor: '#ffd700', borderRadius: 0, textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold' }}
-                itemStyle={{ color: '#ffd700' }}
-                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-              />
-              <Bar dataKey="Pemain" fill="#ffd700" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 skew-x-[-2deg]">
+        {/* Chart 1: Bar Chart (Aktivitas Pemain) */}
+        <div className="bg-[#1a1a1a] p-6 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000]">
+          <h3 className="text-white uppercase tracking-widest font-black mb-6 flex items-center gap-2 text-sm">
+            <Activity className="w-4 h-4 text-p4-yellow" />
+            Distribusi Progress Pemain
+          </h3>
+          <div className="h-[250px] w-full min-h-[250px]">
+            <ResponsiveContainer width="100%" height={250} minHeight={250}>
+              <BarChart data={metrics.chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                <XAxis dataKey="name" stroke="#888" tick={{ fill: '#888', fontSize: 10 }} />
+                <YAxis stroke="#888" tick={{ fill: '#888', fontSize: 10 }} allowDecimals={false} />
+                <RechartsTooltip 
+                  contentStyle={{ backgroundColor: '#111', borderColor: '#ffd700', borderRadius: 0, textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold' }}
+                  itemStyle={{ color: '#ffd700' }}
+                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                />
+                <Bar dataKey="Pemain" fill="#ffd700" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Chart 2: Komposisi Tiket & Akun (Pie Charts) */}
+        <div className="bg-[#1a1a1a] p-6 border-l-4 border-cyan-500 shadow-[8px_8px_0_0_#000] flex flex-col md:flex-row items-center justify-around">
+          <div className="w-full md:w-1/2 flex flex-col items-center">
+             <h3 className="text-white uppercase tracking-widest font-black mb-2 flex items-center gap-2 text-xs">
+              <PieChartIcon className="w-4 h-4 text-cyan-500" />
+              Status Akun
+            </h3>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={userData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value" stroke="none">
+                    {userData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip contentStyle={{ backgroundColor: '#111', borderColor: '#333', fontSize: '12px', fontWeight: 'bold' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex gap-4 text-[10px] font-bold uppercase mt-2">
+              <span className="text-emerald-500">● Aktif: {userData[0].value}</span>
+              <span className="text-orange-500">● Beku: {userData[1].value}</span>
+            </div>
+          </div>
+
+          <div className="w-full md:w-1/2 flex flex-col items-center mt-8 md:mt-0">
+             <h3 className="text-white uppercase tracking-widest font-black mb-2 flex items-center gap-2 text-xs">
+              <TicketIcon className="w-4 h-4 text-blue-500" />
+              Sirkulasi Tiket
+            </h3>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={ticketData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value" stroke="none">
+                    {ticketData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip contentStyle={{ backgroundColor: '#111', borderColor: '#333', fontSize: '12px', fontWeight: 'bold' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex gap-4 text-[10px] font-bold uppercase mt-2">
+              <span className="text-blue-500">● Sisa: {ticketData[0].value}</span>
+              <span className="text-red-500">● Dipakai: {ticketData[1].value}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

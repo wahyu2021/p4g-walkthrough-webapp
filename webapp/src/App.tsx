@@ -63,7 +63,12 @@ function AppContent() {
   const isDungeonsRoute = location.pathname.startsWith('/dungeons');
 
   if (!userId) {
-    return <LoginScreen />;
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginScreen />} />
+        <Route path="*" element={<Navigate to="/login" replace state={{ from: location }} />} />
+      </Routes>
+    );
   }
 
   if (location.pathname === '/admin') {
@@ -191,6 +196,8 @@ function AppContent() {
           <Route path="/exams" element={<ExamsPage />} />
           <Route path="/tracker" element={<TrackerPage />} />
           <Route path="/velvet-room" element={<VelvetRoomPage />} />
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
 

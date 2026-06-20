@@ -85,7 +85,7 @@ export function AdminPanel() {
             <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-p4-yellow to-white uppercase tracking-widest drop-shadow-[2px_2px_0_#000]">
               Command Center
             </h1>
-            <p className="text-p4-gray text-xs md:text-sm font-bold tracking-[0.3em] uppercase mt-2 border-b border-p4-gray/30 pb-2 inline-block">
+            <p className="text-gray-300 text-xs md:text-sm font-bold tracking-[0.3em] uppercase mt-2 border-b border-gray-500/30 pb-2 inline-block">
               Secure Ticketing Network
             </p>
           </div>
@@ -107,7 +107,7 @@ export function AdminPanel() {
                 <span className="w-3 h-3 bg-p4-yellow inline-block animate-pulse"></span>
                 Master Ticket Registry
               </h2>
-              <p className="text-p4-gray text-xs font-mono uppercase tracking-widest mt-1">Total Minted: {tickets.length}</p>
+              <p className="text-gray-300 text-xs font-mono uppercase tracking-widest mt-1">Total Minted: {tickets.length}</p>
             </div>
             
             <button 
@@ -131,7 +131,7 @@ export function AdminPanel() {
           {/* Data Grid */}
           <div className="skew-x-[2deg] grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {tickets.length === 0 ? (
-              <div className="col-span-full p-12 text-center border-2 border-dashed border-p4-gray/30 text-p4-gray uppercase tracking-widest font-black text-lg">
+              <div className="col-span-full p-12 text-center border-2 border-dashed border-gray-500/50 text-gray-300 uppercase tracking-widest font-black text-lg">
                 No tickets established in the network.
               </div>
             ) : (
@@ -139,12 +139,12 @@ export function AdminPanel() {
                 <div 
                   key={t._id} 
                   className={`relative p-5 border-2 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex flex-col gap-3 group overflow-hidden ${
-                    t.isUsed ? 'border-red-900/50 bg-[#111] opacity-70' : 'border-p4-gray/50 bg-[#222] hover:border-p4-yellow cursor-pointer'
+                    t.isUsed ? 'border-red-900/50 bg-[#111] opacity-70' : 'border-white/20 bg-[#222] hover:border-p4-yellow cursor-pointer'
                   }`}
                   onClick={() => !t.isUsed && copyToClipboard(t.code, t._id)}
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
-                  <div className="absolute top-0 right-0 px-2 py-1 bg-p4-black border-l border-b border-p4-gray/30 text-[9px] font-mono text-p4-gray">
+                  <div className="absolute top-0 right-0 px-2 py-1 bg-p4-black border-l border-b border-white/20 text-[9px] font-mono text-gray-300">
                     {new Date(t.createdAt).toLocaleDateString('en-GB')}
                   </div>
 
@@ -159,22 +159,22 @@ export function AdminPanel() {
 
                   {/* Code Reveal */}
                   <div className="mt-2 relative">
-                    <div className="text-p4-gray text-[10px] uppercase font-black tracking-widest mb-1">Access Code</div>
+                    <div className="text-gray-400 text-[10px] uppercase font-black tracking-widest mb-1">Access Code</div>
                     <div className={`font-mono text-xl font-black tracking-widest transition-colors ${t.isUsed ? 'text-red-500 line-through' : 'text-white group-hover:text-p4-yellow'}`}>
                       {t.code}
                     </div>
                   </div>
 
                   {/* Action/User Info */}
-                  <div className="mt-auto pt-3 border-t border-p4-gray/20 flex justify-between items-end min-h-[40px]">
+                  <div className="mt-auto pt-3 border-t border-white/10 flex justify-between items-end min-h-[40px]">
                     {t.isUsed ? (
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-p4-gray uppercase tracking-widest font-bold">Bound to:</span>
+                        <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Bound to:</span>
                         <span className="text-red-400 font-black uppercase tracking-widest text-sm">{t.usedBy}</span>
                       </div>
                     ) : (
                       <div className="flex-1 text-center">
-                        <span className={`text-xs font-black tracking-widest uppercase transition-colors ${copiedId === t._id ? 'text-green-400' : 'text-p4-gray group-hover:text-p4-yellow'}`}>
+                        <span className={`text-xs font-black tracking-widest uppercase transition-colors ${copiedId === t._id ? 'text-green-400' : 'text-gray-400 group-hover:text-p4-yellow'}`}>
                           {copiedId === t._id ? '✓ Copied' : 'Click to Copy'}
                         </span>
                       </div>

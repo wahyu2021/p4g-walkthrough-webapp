@@ -68,7 +68,7 @@ export function LoginScreen() {
         <h1 className="text-4xl md:text-5xl font-black text-p4-yellow uppercase tracking-[0.2em] mb-2 skew-x-[-5deg] drop-shadow-[4px_4px_0_#111] text-center">
           {mode === 'login' ? 'System Login' : 'New Identity'}
         </h1>
-        <p className="text-p4-gray text-xs md:text-sm font-bold tracking-widest uppercase mb-12 bg-p4-yellow px-4 py-1 skew-x-[-10deg]">
+        <p className="text-p4-black text-xs md:text-sm font-black tracking-widest uppercase mb-12 bg-p4-yellow px-4 py-1 skew-x-[-10deg] shadow-sm">
           {mode === 'login' ? 'Enter your credentials' : 'Register with invite ticket'}
         </p>
 
@@ -134,7 +134,7 @@ export function LoginScreen() {
                 setMode(mode === 'login' ? 'register' : 'login');
                 setErrorMsg('');
               }}
-              className="text-p4-gray hover:text-white text-[10px] font-bold uppercase tracking-widest skew-x-[3deg] transition-colors mt-2 underline text-center cursor-pointer"
+              className="text-white/70 hover:text-p4-yellow text-[10px] font-bold uppercase tracking-widest skew-x-[3deg] transition-colors mt-2 underline text-center cursor-pointer"
             >
               {mode === 'login' ? 'No account? Use Invite Ticket' : 'Already have account? Login'}
             </button>

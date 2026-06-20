@@ -233,6 +233,13 @@ router.post('/announcement', checkAdmin, async (req: Request, res: Response): Pr
       { $set: { message, isActive, type, updatedAt: new Date() } },
       { upsert: true }
     );
+
+    // Siarkan secara realtime lewat Socket.IO
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('new_announcement', { message, isActive, type });
+    }
+
     res.json({ message: 'Pengumuman berhasil disiarkan.' });
   } catch (err) {
     res.status(500).json({ error: 'Gagal menyiarkan pengumuman.' });

@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
 import { connectDB } from './db.js';
@@ -13,6 +15,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+const httpServer = createServer(app);
 
 // Konfigurasi CORS - hanya izinkan origin dari env variable
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -199,7 +202,22 @@ app.post('/api/progress/:userId', progressLimiter, checkDB, checkAuth, async (re
   }
 });
 
-// Jalankan server di semua environment (VPS deployment)
-app.listen(port, () => {
+// Inisialisasi WebSocket (Socket.IO) untuk Megaphone Realtime
+const io = new Server(httpServer, {
+  cors: { origin: allowedOrigins }
+});
+
+// Menyuntikkan instance io ke dalam express app agar bisa dipanggil dari routes (seperti admin.ts)
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log(`[Socket.IO] Klien terkoneksi: ${socket.id}`);
+  socket.on('disconnect', () => {
+    console.log(`[Socket.IO] Klien terputus: ${socket.id}`);
+  });
+});
+
+// Jalankan server di semua environment (VPS deployment) menggunakan httpServer
+httpServer.listen(port, () => {
   console.log(`[${process.env.NODE_ENV ?? 'development'}] Server is running on port ${port}`);
 });

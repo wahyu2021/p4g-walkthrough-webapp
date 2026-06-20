@@ -1,6 +1,7 @@
 import { useMemo, lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
 import { AlertTriangle, Info } from 'lucide-react';
+import { io } from 'socket.io-client';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
 import { DungeonSelector } from './components/organisms/DungeonSelector';
@@ -203,11 +204,30 @@ function App() {
 
   useEffect(() => {
     const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
+    
+    // 1. Fetch inisial (saat pertama load)
     fetch(`${API_BASE_URL}/announcement`)
       .then(r => r.json())
       .then(d => {
         if (d && d.isActive) setAnnouncement(d);
+        else setAnnouncement(null);
       }).catch(e => console.error(e));
+
+    // 2. Buka koneksi WebSocket untuk pendengar Real-time
+    const socketUrl = API_BASE_URL.replace('/api', '');
+    const socket = io(socketUrl);
+
+    socket.on('new_announcement', (data) => {
+      if (data && data.isActive) {
+        setAnnouncement(data);
+      } else {
+        setAnnouncement(null);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (

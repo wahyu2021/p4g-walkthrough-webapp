@@ -90,7 +90,7 @@ router.post('/login', async (req: Request, res: Response): Promise<any> => {
       role: user.role,
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '30d' });
+    const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: '30d' });
 
     res.json({ message: 'Login sukses', token, user: payload });
   } catch (err) {

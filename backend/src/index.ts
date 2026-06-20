@@ -48,9 +48,9 @@ const checkAuth = (req: Request, res: Response, next: express.NextFunction): any
     return res.status(401).json({ error: 'Akses Ditolak: Token keamanan tidak ditemukan' });
   }
 
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(' ')[1] as string;
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET as string);
     (req as any).user = decoded; // Menyimpan info user di request
     next();
   } catch (err) {

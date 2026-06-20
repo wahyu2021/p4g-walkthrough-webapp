@@ -156,14 +156,21 @@ router.get('/users', checkAdmin, async (req: Request, res: Response): Promise<an
           progressDays: {
             $cond: {
               if: { $gt: [{ $size: "$progressData" }, 0] },
-              then: { $size: { $ifNull: [{ $arrayElemAt: ["$progressData.checkedDays", 0] }, []] } },
+              then: { $size: { $objectToArray: { $ifNull: [{ $arrayElemAt: ["$progressData.completedDays", 0] }, {}] } } },
               else: 0
             }
           },
           lastMilestone: {
             $cond: {
               if: { $gt: [{ $size: "$progressData" }, 0] },
-              then: { $arrayElemAt: [{ $ifNull: [{ $arrayElemAt: ["$progressData.checkedDays", 0] }, []] }, -1] },
+              then: {
+                $let: {
+                  vars: {
+                    daysArray: { $objectToArray: { $ifNull: [{ $arrayElemAt: ["$progressData.completedDays", 0] }, {}] } }
+                  },
+                  in: { $arrayElemAt: ["$$daysArray.k", -1] }
+                }
+              },
               else: null
             }
           }
@@ -261,8 +268,12 @@ router.get('/leaderboard', checkAdmin, async (req: Request, res: Response): Prom
     const db = await connectDB();
     const progressList = await db.collection('user_progress').find({}).toArray();
     
-    // Urutkan berdasarkan jumlah hari tercentang
-    progressList.sort((a, b) => (b.checkedDays?.length || 0) - (a.checkedDays?.length || 0));
+    // Urutkan berdasarkan jumlah hari tercentang (object keys)
+    progressList.sort((a, b) => {
+      const aLen = a.completedDays ? Object.keys(a.completedDays).length : 0;
+      const bLen = b.completedDays ? Object.keys(b.completedDays).length : 0;
+      return bLen - aLen;
+    });
 
     // Format data peringkat
     const leaderboard = await Promise.all(progressList.map(async (p, idx) => {
@@ -273,7 +284,8 @@ router.get('/leaderboard', checkAdmin, async (req: Request, res: Response): Prom
       return {
         rank: idx + 1,
         username: user?.username || 'Unknown (Deleted)',
-        daysCompleted: p.checkedDays?.length || 0
+        score: p.completedDays ? Object.keys(p.completedDays).length : 0,
+        lastActive: p.updatedAt || new Date().toISOString()
       };
     }));
 

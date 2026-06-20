@@ -40,6 +40,14 @@ jobs:
             echo "🔧 UPDATE BACKEND (EXPRESS API)"
             echo "========================================="
             cd /var/www/p4g-webapp/backend
+            
+            # Suntikkan password dari Github Secret ke .env backend secara otomatis
+            if ! grep -q "LOGIN_PASSWORD=" .env; then
+              echo "LOGIN_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env
+            else
+              sed -i 's/^LOGIN_PASSWORD=.*/LOGIN_PASSWORD=${{ secrets.APP_PASSWORD }}/' .env
+            fi
+
             npm install
             npm run build
             
@@ -51,10 +59,9 @@ jobs:
             echo "========================================="
             cd /var/www/p4g-webapp/webapp
             
-            # Pastikan .env.production selalu ada
-            if [ ! -f .env.production ]; then
-              echo "VITE_API_URL=https://p4g.simpatik.web.id/api" > .env.production
-            fi
+            # Pastikan .env.production selalu ada dengan konfigurasi terbaru
+            echo "VITE_API_URL=https://p4g.simpatik.web.id/api" > .env.production
+            echo "VITE_LOGIN_PASSWORD=${{ secrets.APP_PASSWORD }}" >> .env.production
 
             npm install
             npm run build

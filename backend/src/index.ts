@@ -29,6 +29,18 @@ const checkDB = async (req: Request, res: Response, next: express.NextFunction) 
   }
 };
 
+// ==========================================
+// Middleware Keamanan (Write Protection)
+// ==========================================
+const checkAuth = (req: Request, res: Response, next: express.NextFunction) => {
+  const code = req.headers['x-access-code'];
+  // Jika server tidak mensyaratkan password, izinkan. Jika ya, wajib cocok.
+  if (process.env.LOGIN_PASSWORD && code !== process.env.LOGIN_PASSWORD) {
+    return res.status(403).json({ error: 'Akses Ditolak: Kata Sandi Tidak Valid' });
+  }
+  next();
+};
+
 // Deklarasi custom type untuk menambahkan 'db' ke dalam Request object Express
 declare global {
   namespace Express {
@@ -120,8 +132,8 @@ app.get('/api/progress/:userId', checkDB, async (req, res) => {
   }
 });
 
-// Update/Save Progress User
-app.post('/api/progress/:userId', checkDB, async (req, res) => {
+// Update/Save Progress User (Terlindungi Password)
+app.post('/api/progress/:userId', checkDB, checkAuth, async (req, res) => {
   try {
     const { userId } = req.params;
     const updateData = req.body; // Data progress (checkedDays, dll)

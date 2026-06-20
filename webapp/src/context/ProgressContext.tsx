@@ -68,7 +68,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       try {
         await fetch(`${API_BASE_URL}/progress/${userId}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-access-code': import.meta.env.VITE_LOGIN_PASSWORD || ''
+          },
           body: JSON.stringify({
             completedDays,
             socialStats,

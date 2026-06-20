@@ -1,0 +1,74 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Fetch the last 2 commits to determine changed files
+
+      - name: Execute remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Pindah ke direktori project
+            cd /var/www/p4g-webapp
+            
+            echo "📦 Mengambil pembaruan terbaru dari GitHub..."
+            # Cek daftar file yang berubah sebelum pull
+            git fetch origin main
+            CHANGED_FILES=$(git diff --name-only HEAD origin/main)
+            echo "File yang berubah:"
+            echo "$CHANGED_FILES"
+            
+            # Tarik kode terbaru
+            git pull origin main
+
+            # ============================================
+            # Update Backend (jika ada perubahan)
+            # ============================================
+            if echo "$CHANGED_FILES" | grep -q "^backend/"; then
+              echo "🔧 Perubahan di backend terdeteksi, memulai proses rebuild..."
+              cd /var/www/p4g-webapp/backend
+              npm install
+              npm run build
+              pm2 restart p4g-api
+              echo "✅ Backend berhasil dibangun ulang dan direstart."
+            else
+              echo "⏭️ Tidak ada perubahan di backend, melewati proses rebuild backend."
+            fi
+
+            # ============================================
+            # Update Webapp/Frontend (jika ada perubahan)
+            # ============================================
+            if echo "$CHANGED_FILES" | grep -q "^webapp/"; then
+              echo "🎨 Perubahan di webapp terdeteksi, memulai proses rebuild..."
+              cd /var/www/p4g-webapp/webapp
+              
+              # Pastikan .env.production selalu ada
+              if [ ! -f .env.production ]; then
+                echo "VITE_API_URL=https://p4g.simpatik.web.id/api" > .env.production
+              fi
+
+              npm install
+              npm run build
+              echo "✅ Webapp berhasil dibangun ulang."
+            else
+              echo "⏭️ Tidak ada perubahan di webapp, melewati proses rebuild webapp."
+            fi
+
+            echo "========================================"
+            echo "✅ Proses Deployment Selesai!"
+            echo "========================================"
+            pm2 status

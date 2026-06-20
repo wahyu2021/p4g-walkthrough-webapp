@@ -1,0 +1,83 @@
+import express, { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { connectDB } from '../db.js';
+
+const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-persona-4-golden';
+
+// ==========================================
+// REGISTER ENDPOINT
+// ==========================================
+router.post('/register', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Nama dan sandi wajib diisi.' });
+    }
+
+    const db = await connectDB();
+    const usersCollection = db.collection('users');
+
+    // Cek ketersediaan username
+    const existingUser = await usersCollection.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Karakter dengan nama ini sudah ada, pilih nama lain.' });
+    }
+
+    // Mengamankan password dengan Bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    // Menyimpan data pengguna
+    const newUser = {
+      username,
+      passwordHash,
+      role: 'user', // Default sebagai user biasa
+      createdAt: new Date(),
+    };
+
+    const result = await usersCollection.insertOne(newUser);
+    res.status(201).json({ message: 'Registrasi sukses', userId: result.insertedId });
+  } catch (err) {
+    res.status(500).json({ error: 'Terjadi kesalahan sistem.' });
+  }
+});
+
+// ==========================================
+// LOGIN ENDPOINT
+// ==========================================
+router.post('/login', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { username, password } = req.body;
+    
+    const db = await connectDB();
+    const usersCollection = db.collection('users');
+
+    const user = await usersCollection.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ error: 'Akses Ditolak: Nama atau sandi salah.' });
+    }
+
+    // Pencocokan sandi
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Akses Ditolak: Nama atau sandi salah.' });
+    }
+
+    // Menciptakan Tiket Masuk (JWT) yang berlaku 30 hari
+    const payload = {
+      id: user._id.toString(),
+      username: user.username,
+      role: user.role,
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '30d' });
+
+    res.json({ message: 'Login sukses', token, user: payload });
+  } catch (err) {
+    res.status(500).json({ error: 'Terjadi kesalahan saat masuk.' });
+  }
+});
+
+export default router;

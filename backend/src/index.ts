@@ -4,6 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import jwt from 'jsonwebtoken';
+import authRouter from './routes/auth.js';
 import { connectDB } from './db.js';
 
 dotenv.config();
@@ -34,15 +36,25 @@ const checkDB = async (req: Request, res: Response, next: express.NextFunction) 
 };
 
 // ==========================================
-// Middleware Keamanan (Write Protection)
+// Middleware Keamanan (Write Protection - JWT)
 // ==========================================
-const checkAuth = (req: Request, res: Response, next: express.NextFunction) => {
-  const code = req.headers['x-access-code'];
-  // Jika server tidak mensyaratkan password, izinkan. Jika ya, wajib cocok.
-  if (process.env.LOGIN_PASSWORD && code !== process.env.LOGIN_PASSWORD) {
-    return res.status(403).json({ error: 'Akses Ditolak: Kata Sandi Tidak Valid' });
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-persona-4-golden';
+
+const checkAuth = (req: Request, res: Response, next: express.NextFunction): any => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Akses Ditolak: Token keamanan tidak ditemukan' });
   }
-  next();
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    (req as any).user = decoded; // Menyimpan info user di request
+    next();
+  } catch (err) {
+    return res.status(403).json({ error: 'Akses Ditolak: Tiket sesi tidak valid atau sudah kadaluarsa' });
+  }
 };
 
 // ==========================================
@@ -66,8 +78,13 @@ declare global {
 }
 
 // ==========================================
-// SYSTEM ROUTES
+// Endpoints Routing
 // ==========================================
+
+// Rute Autentikasi (Pendaftaran & Tiket Masuk)
+app.use('/api/auth', authRouter);
+
+// Endpoint API Data
 app.get('/api/health', checkDB, (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running and connected to MongoDB' });
 });

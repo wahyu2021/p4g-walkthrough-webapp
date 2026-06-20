@@ -1,5 +1,5 @@
 import { useMemo, lazy, Suspense, useState, useEffect } from 'react';
-import { Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, Link, Outlet } from 'react-router-dom';
 import { AlertTriangle, Info } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { MainLayout } from './components/templates/MainLayout';
@@ -13,6 +13,8 @@ import { useProgress } from './hooks/useProgress';
 import type { WalkthroughMonth, Dungeon } from './types/walkthrough';
 import { LoginScreen } from './components/organisms/LoginScreen';
 import { AdminPanel } from './pages/AdminPanel';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { ProtectedRoute, AdminRoute, PublicOnlyRoute } from './components/atoms/RouteGuards';
 
 // Lazy load pages for code splitting
 const WalkthroughView = lazy(() => import('./components/templates/WalkthroughView').then(module => ({ default: module.WalkthroughView })));
@@ -22,7 +24,8 @@ const ExamsPage = lazy(() => import('./pages/ExamsPage').then(module => ({ defau
 const TrackerPage = lazy(() => import('./pages/TrackerPage').then(module => ({ default: module.TrackerPage })));
 const VelvetRoomPage = lazy(() => import('./pages/VelvetRoomPage').then(module => ({ default: module.VelvetRoomPage })));
 
-function AppContent() {
+// Membungkus Layout Utama dengan State Global
+function AppLayoutWrapper() {
   const location = useLocation();
   const { userId, role, logout, completedDays, resetProgress } = useProgress();
 
@@ -44,36 +47,12 @@ function AppContent() {
     });
   }, []);
 
-  // Calculate overall progress
-  const totalDays = useMemo(() => {
-    return allData.reduce((acc, m) => acc + m.days.length, 0);
-  }, [allData]);
-
-  const completedCount = useMemo(() => {
-    // We only count keys that are explicitly set to TRUE
-    return Object.keys(completedDays).filter(key => completedDays[key] === true).length;
-  }, [completedDays]);
-
-  const progressPercentage = useMemo(() => {
-    if (totalDays === 0) return "0.00";
-    return ((completedCount / totalDays) * 100).toFixed(2);
-  }, [completedCount, totalDays]);
+  const totalDays = useMemo(() => allData.reduce((acc, m) => acc + m.days.length, 0), [allData]);
+  const completedCount = useMemo(() => Object.keys(completedDays).filter(key => completedDays[key] === true).length, [completedDays]);
+  const progressPercentage = useMemo(() => totalDays === 0 ? "0.00" : ((completedCount / totalDays) * 100).toFixed(2), [completedCount, totalDays]);
 
   const isWalkthroughRoute = location.pathname === '/' || location.pathname.startsWith('/walkthrough');
   const isDungeonsRoute = location.pathname.startsWith('/dungeons');
-
-  if (!userId) {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginScreen />} />
-        <Route path="*" element={<Navigate to="/login" replace state={{ from: location }} />} />
-      </Routes>
-    );
-  }
-
-  if (location.pathname === '/admin') {
-    return <AdminPanel />;
-  }
 
   if (isLoading) {
     return (
@@ -85,7 +64,6 @@ function AppContent() {
 
   const sidebarContent = (
     <div className="flex flex-col py-6 space-y-8">
-      {/* User Profile Section */}
       <section className="px-6 flex flex-col gap-2">
          <div className="text-[10px] text-gray-500 font-black tracking-widest uppercase">Current Data</div>
          <div className="flex justify-between items-center bg-p4-gray border border-p4-yellow px-4 py-2 skew-x-[-5deg]">
@@ -96,54 +74,31 @@ function AppContent() {
                  Admin
                </Link>
              )}
-             <button 
-               onClick={logout}
-               className="text-[10px] text-p4-yellow hover:text-white uppercase font-bold tracking-widest"
-             >
+             <button onClick={logout} className="text-[10px] text-p4-yellow hover:text-white uppercase font-bold tracking-widest">
                Logout
              </button>
            </div>
          </div>
       </section>
 
-      {/* Main Menu Section */}
       <section>
-        <h3 className="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">
-          Main Menu
-        </h3>
-        <div className="md:px-2">
-          <NavTabs 
-            isVertical={true} 
-          />
-        </div>
+        <h3 className="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Main Menu</h3>
+        <div className="md:px-2"><NavTabs isVertical={true} /></div>
       </section>
 
-      {/* Today's Schedule Widget (Global) */}
-      <section className="px-2">
-        <TodaysSchedule />
-      </section>
+      <section className="px-2"><TodaysSchedule /></section>
 
-      {/* Timeline Section (Only for Walkthrough) */}
       {isWalkthroughRoute && (
         <section className="animate-in fade-in slide-in-from-left-4 duration-500">
-          <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">
-            Timeline
-          </h3>
-          <MonthSelector 
-            months={availableMonths} 
-          />
+          <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">Timeline</h3>
+          <MonthSelector months={availableMonths} />
         </section>
       )}
 
-      {/* Dungeons Section (Only for Dungeons route) */}
       {isDungeonsRoute && (
         <section className="animate-in fade-in slide-in-from-left-4 duration-500">
-          <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">
-            Locations
-          </h3>
-          <DungeonSelector 
-            dungeons={dungeons} 
-          />
+          <h3 className="px-6 mb-4 text-[10px] font-black text-p4-yellow uppercase tracking-[0.3em]">Locations</h3>
+          <DungeonSelector dungeons={dungeons} />
         </section>
       )}
     </div>
@@ -157,22 +112,15 @@ function AppContent() {
              <div className="flex flex-col items-end">
                <div className="text-[10px] uppercase font-black text-p4-yellow tracking-tighter leading-none mb-1">Overall Progress</div>
                <div className="w-24 h-1.5 bg-p4-gray rounded-full overflow-hidden border border-p4-black">
-                 <div 
-                   className="h-full bg-p4-yellow transition-all duration-500" 
-                   style={{ width: `${progressPercentage}%` }}
-                 />
+                 <div className="h-full bg-p4-yellow transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
                </div>
              </div>
              <div className="bg-p4-yellow text-p4-black px-2 py-0.5 font-black italic text-sm skew-x-[-10deg] min-w-15 text-center">
                {progressPercentage}%
              </div>
            </div>
-           
            <div className="border-l border-p4-gray/30 pl-6 hidden sm:block">
-             <button 
-                onClick={resetProgress}
-                className="text-[10px] text-gray-500 hover:text-red-500 transition-colors uppercase font-black tracking-widest border border-p4-gray/30 px-2 py-1 hover:border-red-500/50 bg-p4-black/20"
-              >
+             <button onClick={resetProgress} className="text-[10px] text-gray-500 hover:text-red-500 transition-colors uppercase font-black tracking-widest border border-p4-gray/30 px-2 py-1 hover:border-red-500/50 bg-p4-black/20">
                 Reset
               </button>
            </div>
@@ -185,22 +133,8 @@ function AppContent() {
           Loading Data...
         </div>
       }>
-        <Routes>
-          <Route path="/" element={<Navigate to="/walkthrough/april" replace />} />
-          <Route path="/walkthrough" element={<Navigate to="/walkthrough/april" replace />} />
-          <Route path="/walkthrough/:monthSlug" element={<WalkthroughView />} />
-          
-          <Route path="/social-links" element={<SocialLinksPage />} />
-          <Route path="/dungeons" element={<DungeonsPage />} />
-          <Route path="/dungeons/:slug" element={<DungeonsPage />} />
-          <Route path="/exams" element={<ExamsPage />} />
-          <Route path="/tracker" element={<TrackerPage />} />
-          <Route path="/velvet-room" element={<VelvetRoomPage />} />
-          <Route path="/login" element={<Navigate to="/" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Outlet />
       </Suspense>
-
       <ScrollToTop />
     </MainLayout>
   );
@@ -212,7 +146,6 @@ function App() {
   useEffect(() => {
     const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
     
-    // 1. Fetch inisial (saat pertama load)
     fetch(`${API_BASE_URL}/announcement`)
       .then(r => r.json())
       .then(d => {
@@ -220,23 +153,15 @@ function App() {
         else setAnnouncement(null);
       }).catch(e => console.error(e));
 
-    // 2. Buka koneksi WebSocket untuk pendengar Real-time
     const socketUrl = API_BASE_URL.replace('/api', '');
-    const socket = io(socketUrl, {
-      path: '/api/socket.io'
-    });
+    const socket = io(socketUrl, { path: '/api/socket.io' });
 
     socket.on('new_announcement', (data) => {
-      if (data && data.isActive) {
-        setAnnouncement(data);
-      } else {
-        setAnnouncement(null);
-      }
+      if (data && data.isActive) setAnnouncement(data);
+      else setAnnouncement(null);
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    return () => { socket.disconnect(); };
   }, []);
 
   return (
@@ -247,7 +172,36 @@ function App() {
           {announcement.message}
         </div>
       )}
-      <AppContent />
+      
+      <Routes>
+        {/* Rute Publik Terisolasi */}
+        <Route element={<PublicOnlyRoute />}>
+          <Route path="/login" element={<LoginScreen />} />
+        </Route>
+
+        {/* Rute Admin Eksklusif */}
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<AdminPanel />} />
+        </Route>
+
+        {/* Rute Berpelindung (Main App) */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayoutWrapper />}>
+            <Route path="/" element={<Navigate to="/walkthrough/april" replace />} />
+            <Route path="/walkthrough" element={<Navigate to="/walkthrough/april" replace />} />
+            <Route path="/walkthrough/:monthSlug" element={<WalkthroughView />} />
+            <Route path="/social-links" element={<SocialLinksPage />} />
+            <Route path="/dungeons" element={<DungeonsPage />} />
+            <Route path="/dungeons/:slug" element={<DungeonsPage />} />
+            <Route path="/exams" element={<ExamsPage />} />
+            <Route path="/tracker" element={<TrackerPage />} />
+            <Route path="/velvet-room" element={<VelvetRoomPage />} />
+          </Route>
+        </Route>
+
+        {/* Penangkap Kesesatan (404 Not Found) */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </>
   );
 }

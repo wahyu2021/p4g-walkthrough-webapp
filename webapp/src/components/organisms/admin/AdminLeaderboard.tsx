@@ -1,9 +1,41 @@
-import { Trophy, Medal } from 'lucide-react';
+import { Trophy, Medal, Loader2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { useProgress } from '../../../hooks/useProgress';
 import type { LeaderboardEntry } from '../../../types/admin';
 
-export function AdminLeaderboard({ data }: { data: LeaderboardEntry[] }) {
-  if (!data || data.length === 0) return <div className="text-center p-8 text-gray-500 uppercase tracking-widest font-bold">Belum ada data progres pemain.</div>;
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
+export function AdminLeaderboard() {
+  const { token } = useProgress();
+
+  const { data: leaderboard, isLoading, isError } = useQuery({
+    queryKey: ['adminLeaderboard'],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE_URL}/admin/leaderboard`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Gagal memuat leaderboard');
+      const data = await res.json();
+      return (data.leaderboard || []) as LeaderboardEntry[];
+    },
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000
+  });
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-p4-yellow">
+        <Loader2 className="w-10 h-10 animate-spin mb-4" />
+        <p className="font-black tracking-widest uppercase text-sm">Menyusun Peringkat...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div className="text-center p-8 text-red-500 uppercase tracking-widest font-bold">Gagal memuat papan peringkat.</div>;
+  }
+
+  const data = leaderboard || [];
+  if (data.length === 0) return <div className="text-center p-8 text-gray-500 uppercase tracking-widest font-bold">Belum ada data progres pemain.</div>;
   return (
     <div className="skew-x-[2deg]">
       <h2 className="text-xl font-black text-white uppercase tracking-widest flex items-center gap-3 border-b-2 border-p4-yellow/30 pb-6 mb-8">

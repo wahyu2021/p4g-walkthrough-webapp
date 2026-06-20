@@ -1,23 +1,119 @@
 import { useState } from 'react';
-import { Trash2, Copy, CheckCircle2, TicketPlus, ArchiveX } from 'lucide-react';
+import { Trash2, Copy, CheckCircle2, TicketPlus, ArchiveX, Loader2 } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useProgress } from '../../../hooks/useProgress';
+import { useUi } from '../../../context/UiContext';
 import type { Ticket } from '../../../types/admin';
 
-type AdminTicketsProps = {
-  tickets: Ticket[];
-  loading: boolean;
-  onGenerate: () => void;
-  onPurge: () => void;
-  onRevoke: (id: string) => void;
-};
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
-export function AdminTickets({ tickets, loading, onGenerate, onPurge, onRevoke }: AdminTicketsProps) {
+export function AdminTickets() {
+  const { token } = useProgress();
+  const { showToast, showConfirm } = useUi();
+  const queryClient = useQueryClient();
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const { data: tickets, isLoading, isError } = useQuery({
+    queryKey: ['adminTickets'],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE_URL}/admin/invite/list`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Gagal memuat tiket');
+      const data = await res.json();
+      return (data.tickets || []) as Ticket[];
+    },
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000
+  });
+
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${API_BASE_URL}/admin/invite/generate`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Gagal mencetak tiket baru');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminTickets'] });
+      queryClient.invalidateQueries({ queryKey: ['adminMetrics'] });
+      showToast('Tiket berhasil dicetak!', 'success');
+    },
+    onError: (err: any) => showToast(err.message, 'error')
+  });
+
+  const revokeMutation = useMutation({
+    mutationFn: async (ticketId: string) => {
+      const res = await fetch(`${API_BASE_URL}/admin/invite/revoke`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticketId })
+      });
+      if (!res.ok) throw new Error('Gagal menghanguskan tiket');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminTickets'] });
+      queryClient.invalidateQueries({ queryKey: ['adminMetrics'] });
+      showToast('Tiket berhasil dihancurkan.', 'success');
+    },
+    onError: (err: any) => showToast(err.message, 'error')
+  });
+
+  const purgeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${API_BASE_URL}/admin/invite/purge`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Gagal membersihkan tiket');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminTickets'] });
+      queryClient.invalidateQueries({ queryKey: ['adminMetrics'] });
+      showToast('Tiket usang berhasil dilenyapkan.', 'success');
+    },
+    onError: (err: any) => showToast(err.message, 'error')
+  });
 
   const copyToClipboard = (code: string, id: string) => {
     navigator.clipboard.writeText(code);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  const onGenerate = () => generateMutation.mutate();
+  const onPurge = async () => {
+    const isConfirmed = await showConfirm({
+      title: 'Pembersihan Massal',
+      message: 'PERINGATAN: Lenyapkan seluruh tiket usang/hangus dari database secara permanen?',
+      isDestructive: true,
+      confirmText: 'Lenyapkan'
+    });
+    if (isConfirmed) purgeMutation.mutate();
+  };
+  const onRevoke = async (id: string) => {
+    const isConfirmed = await showConfirm({
+      title: 'Cabut Tiket',
+      message: 'Hancurkan tiket ini secara permanen?',
+      isDestructive: true,
+      confirmText: 'Hancurkan'
+    });
+    if (isConfirmed) revokeMutation.mutate(id);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-p4-yellow">
+        <Loader2 className="w-10 h-10 animate-spin mb-4" />
+        <p className="font-black tracking-widest uppercase text-sm">Menyusun Data Tiket...</p>
+      </div>
+    );
+  }
+
+  if (isError || !tickets) {
+    return <div className="text-center p-8 text-red-500 uppercase tracking-widest font-bold">Gagal memuat data tiket.</div>;
+  }
 
   return (
     <div className="skew-x-[2deg]">
@@ -39,11 +135,11 @@ export function AdminTickets({ tickets, loading, onGenerate, onPurge, onRevoke }
           </button>
           <button 
             onClick={onGenerate}
-            disabled={loading}
+            disabled={generateMutation.isPending}
             className="flex items-center gap-2 relative px-6 py-2 bg-p4-yellow text-p4-black font-black uppercase tracking-widest hover:bg-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             <TicketPlus className="w-5 h-5" />
-            {loading ? 'Memproses...' : 'Buat Tiket Baru'}
+            {generateMutation.isPending ? 'Memproses...' : 'Buat Tiket Baru'}
           </button>
         </div>
       </div>
@@ -98,8 +194,8 @@ export function AdminTickets({ tickets, loading, onGenerate, onPurge, onRevoke }
                 ) : (
                   <div className="flex-1 text-center">
                     <span className={`flex items-center justify-center gap-2 text-xs font-black tracking-widest uppercase transition-colors ${copiedId === t._id ? 'text-green-400' : 'text-gray-500 group-hover:text-p4-yellow cursor-pointer'}`} onClick={() => copyToClipboard(t.code, t._id)}>
-                      {copiedId === t._id ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      {copiedId === t._id ? 'Tersalin' : 'Salin Kode'}
+                      {copiedId === t._id ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                      {copiedId === t._id ? 'Tersalin!' : 'Klik untuk Menyalin'}
                     </span>
                   </div>
                 )}

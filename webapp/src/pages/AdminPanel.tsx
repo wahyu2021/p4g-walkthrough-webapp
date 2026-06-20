@@ -1,31 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useProgress } from '../hooks/useProgress';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AlertTriangle, Activity, Ticket as TicketIcon, Users, Megaphone, Trophy } from 'lucide-react';
+import { Activity, Ticket as TicketIcon, Users, Megaphone, Trophy } from 'lucide-react';
 
-import type { Ticket, User, Metrics, LeaderboardEntry } from '../types/admin';
 import { AdminMetrics } from '../components/organisms/admin/AdminMetrics';
 import { AdminTickets } from '../components/organisms/admin/AdminTickets';
 import { AdminUsers } from '../components/organisms/admin/AdminUsers';
 import { AdminAnnouncements } from '../components/organisms/admin/AdminAnnouncements';
 import { AdminLeaderboard } from '../components/organisms/admin/AdminLeaderboard';
-import { useUi } from '../context/UiContext';
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
 export function AdminPanel() {
   const { role, token } = useProgress();
   const navigate = useNavigate();
-  const { showToast, showConfirm } = useUi();
-  
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-
   const location = useLocation();
   // Mengambil segmen terakhir dari URL /admin/xxx, default ke 'overview'
   const activeTab = location.pathname.split('/').pop() === 'admin' ? 'overview' : location.pathname.split('/').pop() || 'overview';
@@ -33,115 +22,6 @@ export function AdminPanel() {
   useEffect(() => {
     if (role !== 'admin') navigate('/');
   }, [role, navigate]);
-
-  const fetchData = async () => {
-    try {
-      const headers = { 'Authorization': `Bearer ${token}` };
-      const mRes = await fetch(`${API_BASE_URL}/admin/metrics`, { headers });
-      if (mRes.ok) setMetrics(await mRes.json());
-
-      const tRes = await fetch(`${API_BASE_URL}/admin/invite/list`, { headers });
-      if (tRes.ok) {
-        const tData = await tRes.json();
-        setTickets(tData.tickets || []);
-      }
-
-      const uRes = await fetch(`${API_BASE_URL}/admin/users`, { headers });
-      if (uRes.ok) {
-        const uData = await uRes.json();
-        setUsers(uData.users || []);
-      }
-
-      const lRes = await fetch(`${API_BASE_URL}/admin/leaderboard`, { headers });
-      if (lRes.ok) {
-        const lData = await lRes.json();
-        setLeaderboard(lData.leaderboard || []);
-      }
-    } catch (err: any) { setErrorMsg('Gagal memuat data dari peladen.'); }
-  };
-
-  useEffect(() => {
-    if (role === 'admin' && token) fetchData();
-  }, [role, token]);
-
-  const generateTicket = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/admin/invite/generate`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Gagal mencetak tiket baru');
-      await fetchData();
-      showToast('Tiket berhasil dicetak!', 'success');
-    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); } 
-    finally { setLoading(false); }
-  };
-
-  const revokeTicket = async (ticketId: string) => {
-    const isConfirmed = await showConfirm({
-      title: 'Cabut Tiket',
-      message: 'Hancurkan tiket ini secara permanen?',
-      isDestructive: true,
-      confirmText: 'Hancurkan'
-    });
-    if (!isConfirmed) return;
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/admin/invite/revoke`, {
-        method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ ticketId })
-      });
-      if (!res.ok) throw new Error('Gagal menghanguskan tiket');
-      await fetchData(); 
-      showToast('Tiket berhasil dihancurkan.', 'success');
-    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
-  };
-
-  const purgeTickets = async () => {
-    const isConfirmed = await showConfirm({
-      title: 'Pembersihan Massal',
-      message: 'PERINGATAN: Lenyapkan seluruh tiket usang/hangus dari database secara permanen?',
-      isDestructive: true,
-      confirmText: 'Lenyapkan'
-    });
-    if (!isConfirmed) return;
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/admin/invite/purge`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Gagal membersihkan tiket');
-      await fetchData(); 
-      showToast('Tiket usang berhasil dilenyapkan.', 'success');
-    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
-  };
-
-  const toggleSuspend = async (userId: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'suspended' ? 'active' : 'suspended';
-    const isConfirmed = await showConfirm({
-      title: 'Ubah Status',
-      message: `Ubah status pengguna ini menjadi ${newStatus}?`,
-      isDestructive: newStatus === 'suspended',
-      confirmText: 'Ubah Status'
-    });
-    if (!isConfirmed) return;
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/admin/users/suspend`, {
-        method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ targetUserId: userId, newStatus })
-      });
-      if (!res.ok) throw new Error('Akses ditolak atau gagal mengubah status');
-      await fetchData();
-      showToast(`Status berhasil diubah menjadi ${newStatus}.`, 'success');
-    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
-  };
-
-  const resetPassword = async (userId: string) => {
-    const newPass = window.prompt('Masukkan kata sandi baru untuk pengguna ini:');
-    if (!newPass) return;
-    try {
-      const res = await fetch(`${API_BASE_URL}/admin/users/reset-password`, {
-        method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ targetUserId: userId, newPassword: newPass })
-      });
-      if (!res.ok) throw new Error('Gagal me-reset kata sandi');
-      showToast('Sandi berhasil diubah!', 'success');
-    } catch (err: any) { setErrorMsg(err.message); showToast(err.message, 'error'); }
-  };
 
   if (role !== 'admin') return null;
 
@@ -194,16 +74,8 @@ export function AdminPanel() {
           </Link>
         </div>
 
-        {errorMsg && (
-          <div className="mb-6 skew-x-[-2deg] animate-in fade-in zoom-in bg-red-950/50 border-l-4 border-red-500 p-4 shadow-[4px_4px_0_0_#000]">
-            <p className="text-red-500 font-bold uppercase tracking-widest flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5" /> {errorMsg}
-            </p>
-          </div>
-        )}
-
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {activeTab === 'overview' && <AdminMetrics metrics={metrics} />}
+          {activeTab === 'overview' && <AdminMetrics />}
 
           {activeTab === 'announcements' && (
             <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
@@ -213,19 +85,19 @@ export function AdminPanel() {
 
           {activeTab === 'leaderboard' && (
             <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
-              <AdminLeaderboard data={leaderboard} />
+              <AdminLeaderboard />
             </div>
           )}
 
           {activeTab === 'tickets' && (
             <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
-              <AdminTickets tickets={tickets} loading={loading} onGenerate={generateTicket} onPurge={purgeTickets} onRevoke={revokeTicket} />
+              <AdminTickets />
             </div>
           )}
           
           {activeTab === 'users' && (
             <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
-              <AdminUsers users={users} onToggleSuspend={toggleSuspend} onResetPassword={resetPassword} />
+              <AdminUsers />
             </div>
           )}
         </div>

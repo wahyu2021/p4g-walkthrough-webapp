@@ -1,12 +1,42 @@
-import { Users, Ticket as TicketIcon, TicketX, Activity, UserCheck, UserX, PieChart as PieChartIcon } from 'lucide-react';
+import { Users, Ticket as TicketIcon, TicketX, Activity, UserCheck, UserX, PieChart as PieChartIcon, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+import { useProgress } from '../../../hooks/useProgress';
 import type { Metrics } from '../../../types/admin';
 
-type AdminMetricsProps = { metrics: Metrics | null };
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
-export function AdminMetrics({ metrics }: AdminMetricsProps) {
-  if (!metrics) return null;
+export function AdminMetrics() {
+  const { token } = useProgress();
 
+  const { data: metrics, isLoading, isError } = useQuery({
+    queryKey: ['adminMetrics'],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE_URL}/admin/metrics`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Gagal mengambil metrik admin');
+      return (await res.json()) as Metrics;
+    },
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000 // Cache selama 5 menit
+  });
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-p4-yellow">
+        <Loader2 className="w-10 h-10 animate-spin mb-4" />
+        <p className="font-black tracking-widest uppercase text-sm">Menghitung Metrik...</p>
+      </div>
+    );
+  }
+
+  if (isError || !metrics) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-red-500">
+        <p className="font-black tracking-widest uppercase text-sm">Gagal memuat data metrik.</p>
+      </div>
+    );
+  }
   // Data olahan untuk Pie Chart
   const ticketData = [
     { name: 'Tersedia', value: metrics.activeTickets, color: '#3b82f6' },

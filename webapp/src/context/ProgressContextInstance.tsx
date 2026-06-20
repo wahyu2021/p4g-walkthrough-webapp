@@ -10,7 +10,9 @@ export type SocialStats = {
 
 export interface ProgressContextType {
   userId: string | null;
-  login: (id: string) => void;
+  token: string | null;
+  role: string | null;
+  login: (id: string, token: string, role: string) => void;
   logout: () => void;
   completedDays: Record<string, boolean>;
   toggleDay: (date: string) => void;

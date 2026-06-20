@@ -17,6 +17,8 @@ const DEFAULT_STATS: SocialStats = {
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [userId, setUserId] = useState<string | null>(() => localStorage.getItem(USER_STORAGE_KEY));
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('p4g-auth-token'));
+  const [role, setRole] = useState<string | null>(() => localStorage.getItem('p4g-user-role'));
   const [dataLoaded, setDataLoaded] = useState(false);
 
   const [completedDays, setCompletedDays] = useState<Record<string, boolean>>({});
@@ -38,7 +40,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     let isMounted = true;
     const fetchProgress = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/progress/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/progress/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (!response.ok) throw new Error('Failed to fetch progress');
         
         const data = await response.json();
@@ -70,7 +74,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'x-access-code': import.meta.env.VITE_LOGIN_PASSWORD || ''
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             completedDays,
@@ -90,14 +94,22 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   }, [completedDays, socialStats, completedQuests, completedBooks, userId, dataLoaded]);
 
 
-  const login = (id: string) => {
+  const login = (id: string, newToken: string, userRole: string) => {
     localStorage.setItem(USER_STORAGE_KEY, id);
+    localStorage.setItem('p4g-auth-token', newToken);
+    localStorage.setItem('p4g-user-role', userRole);
     setUserId(id);
+    setToken(newToken);
+    setRole(userRole);
   };
 
   const logout = () => {
     localStorage.removeItem(USER_STORAGE_KEY);
+    localStorage.removeItem('p4g-auth-token');
+    localStorage.removeItem('p4g-user-role');
     setUserId(null);
+    setToken(null);
+    setRole(null);
   };
 
   const toggleDay = (date: string) => {
@@ -133,7 +145,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   return (
     <ProgressContext.Provider value={{ 
-      userId, login, logout,
+      userId, token, role, login, logout,
       completedDays, toggleDay, isDayCompleted, 
       socialStats, updateStat, 
       completedQuests, toggleQuest, isQuestCompleted,

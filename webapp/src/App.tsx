@@ -10,6 +10,7 @@ import { getAvailableMonths, getWalkthroughData, getDungeons } from './utils/dat
 import { useProgress } from './hooks/useProgress';
 import type { WalkthroughMonth, Dungeon } from './types/walkthrough';
 import { LoginScreen } from './components/organisms/LoginScreen';
+import { AdminPanel } from './pages/AdminPanel';
 
 // Lazy load pages for code splitting
 const WalkthroughView = lazy(() => import('./components/templates/WalkthroughView').then(module => ({ default: module.WalkthroughView })));
@@ -21,7 +22,7 @@ const VelvetRoomPage = lazy(() => import('./pages/VelvetRoomPage').then(module =
 
 function App() {
   const location = useLocation();
-  const { userId, logout, completedDays, resetProgress } = useProgress();
+  const { userId, role, logout, completedDays, resetProgress } = useProgress();
 
   const [availableMonths, setAvailableMonths] = useState<{ month: string; month_num: number }[]>([]);
   const [allData, setAllData] = useState<WalkthroughMonth[]>([]);
@@ -63,6 +64,10 @@ function App() {
     return <LoginScreen />;
   }
 
+  if (location.pathname === '/admin') {
+    return <AdminPanel />;
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-p4-black text-p4-yellow font-bold uppercase tracking-widest animate-pulse">
@@ -78,12 +83,19 @@ function App() {
          <div className="text-[10px] text-gray-500 font-black tracking-widest uppercase">Current Data</div>
          <div className="flex justify-between items-center bg-p4-gray border border-p4-yellow px-4 py-2 skew-x-[-5deg]">
            <span className="text-white font-black">{userId}</span>
-           <button 
-             onClick={logout}
-             className="text-[10px] text-p4-yellow hover:text-white uppercase font-bold tracking-widest"
-           >
-             Logout
-           </button>
+           <div className="flex gap-4">
+             {role === 'admin' && (
+               <Link to="/admin" className="text-[10px] text-p4-yellow hover:text-white uppercase font-bold tracking-widest">
+                 Admin
+               </Link>
+             )}
+             <button 
+               onClick={logout}
+               className="text-[10px] text-p4-yellow hover:text-white uppercase font-bold tracking-widest"
+             >
+               Logout
+             </button>
+           </div>
          </div>
       </section>
 

@@ -9,7 +9,12 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+// Konfigurasi CORS - hanya izinkan origin dari env variable
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:5173'];
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 // ==========================================
@@ -75,8 +80,20 @@ app.get('/api/activities', checkDB, async (req, res) => {
 
 app.get('/api/walkthrough', checkDB, async (req, res) => {
   try {
-    const data = await req.db.collection('walkthrough').findOne({});
-    res.json(data || {});
+    // Ambil semua data
+    const data = await req.db.collection('walkthrough').find({}).toArray();
+    
+    // Urutkan secara manual: April (4) sampai Maret (3 tahun depannya)
+    // Urutan bulan P4G: 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3
+    const sortedData = data.sort((a: any, b: any) => {
+      const getOrder = (num: number | undefined) => {
+        if (num === undefined) return 99; // Untuk data non-bulan seperti ng_plus
+        return num >= 4 ? num : num + 12; // April(4) tetap 4, Januari(1) jadi 13
+      };
+      return getOrder(a.month_num) - getOrder(b.month_num);
+    });
+
+    res.json(sortedData);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch walkthrough' });
   }
@@ -122,6 +139,7 @@ app.post('/api/progress/:userId', checkDB, async (req, res) => {
   }
 });
 
+// Jalankan server di semua environment (VPS deployment)
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`[${process.env.NODE_ENV ?? 'development'}] Server is running on port ${port}`);
 });

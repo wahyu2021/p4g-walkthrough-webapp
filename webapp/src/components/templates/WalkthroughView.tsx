@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useLocation } from 'react-router-dom';
 import { DayList } from '../organisms/DayList';
 import { SearchInput } from '../atoms/SearchInput';
 import { getWalkthroughData } from '../../utils/dataFetcher';
@@ -7,6 +7,7 @@ import type { WalkthroughMonth } from '../../types/walkthrough';
 
 export function WalkthroughView() {
   const { monthSlug } = useParams<{ monthSlug: string }>();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   
   const [allData, setAllData] = useState<WalkthroughMonth[]>([]);
@@ -25,6 +26,19 @@ export function WalkthroughView() {
     const foundMonth = allData.find(m => m.month === monthSlug.toLowerCase());
     return foundMonth ? foundMonth.days : [];
   }, [allData, monthSlug]);
+
+  useEffect(() => {
+    if (!isLoading && location.hash && activeMonthData.length > 0) {
+      // Small timeout to ensure DOM is updated after render
+      setTimeout(() => {
+        const id = location.hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [isLoading, location.hash, location.key, activeMonthData]);
 
   if (!monthSlug) {
     return <Navigate to="/walkthrough/april" replace />;

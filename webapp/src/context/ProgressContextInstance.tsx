@@ -9,6 +9,9 @@ export type SocialStats = {
 };
 
 export interface ProgressContextType {
+  userId: string | null;
+  login: (id: string) => void;
+  logout: () => void;
   completedDays: Record<string, boolean>;
   toggleDay: (date: string) => void;
   isDayCompleted: (date: string) => boolean;

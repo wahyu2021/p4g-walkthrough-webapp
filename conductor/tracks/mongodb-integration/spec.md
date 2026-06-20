@@ -9,7 +9,7 @@ Mengubah sistem penyimpanan data statis (JSON lokal) dan progres (Local Storage)
 3. **Data Migration:** Membuat skrip untuk memigrasikan semua data `.json` di folder `data/` ke MongoDB.
 4. **API Integration:** Mengubah logika *fetching* di Webapp (React) untuk mengambil data dari backend API alih-alih file statis.
 5. **Progress Sync:** Mengubah sistem `useProgress` (yang saat ini menggunakan localStorage) agar menyimpan dan memuat progres dari/ke MongoDB.
-6. **Authentication (Opsional tapi Direkomendasikan):** Agar progres pengguna tidak tertukar, integrasi MongoDB untuk *progress tracking* idealnya diiringi dengan sistem otentikasi (misalnya JWT, NextAuth, atau Firebase Auth).
+6. **Authentication (Simple Username Login):** Agar progres pengguna tidak tertukar, aplikasi memerlukan form login sederhana di mana pengguna cukup memasukkan *Username* (contoh: "Yuu"). Username ini akan menjadi `userId` untuk mengambil dan menyimpan progres secara independen di MongoDB.
 
 ## Pre-requisites (Persiapan dari User)
 - **MongoDB Cluster:** Sudah dibuat (User confirmation).

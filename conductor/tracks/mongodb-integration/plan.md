@@ -19,7 +19,15 @@
 1. **Update `dataFetcher.ts`:** Ganti logika pembacaan file JSON menjadi HTTP request (misal dengan `fetch` atau `axios`) ke Backend API.
 2. **Update `useProgress.ts`:** Ubah implementasi localStorage agar melakukan sinkronisasi dengan database melalui API (pertimbangkan caching lokal untuk performa).
 
-## Phase 5: Testing & Validation
-1. Uji koneksi database di *environment* lokal.
-2. Validasi bahwa UI Webapp menampilkan data yang benar dari MongoDB.
-3. Validasi bahwa progress ceklis dapat tersimpan dan tidak hilang saat direfresh atau dibuka di perangkat lain (jika ada sistem User).
+## Phase 5: Simple Login & Progress Sync (Testing & Validation)
+1. **Buat Login UI (Sederhana):** 
+   - Modifikasi `App.tsx` atau buat *component* baru untuk mengecek ketersediaan `userId` di `localStorage`.
+   - Jika belum ada, tampilkan *screen* atau *modal* yang meminta pengguna memasukkan nama (misal: "Yuu").
+2. **Update `useProgress.ts` (Progress Sync):**
+   - Ambil `userId` yang sedang aktif.
+   - Panggil `GET /api/progress/:userId` saat aplikasi pertama kali dimuat (atau saat user baru login) untuk menimpa state `completedDays`, `socialStats`, dll dengan data dari database.
+   - Panggil `POST /api/progress/:userId` dengan seluruh state *progress* saat ini setiap kali pengguna mencentang sesuatu (gunakan *debouncing* jika perlu agar tidak spam API).
+3. **Validasi:** 
+   - Uji koneksi database di *environment* lokal.
+   - Pastikan login dengan username "Yuu" me-load data "Yuu".
+   - Logout (hapus localStorage) dan login dengan nama lain untuk memastikan data kosong/terpisah.

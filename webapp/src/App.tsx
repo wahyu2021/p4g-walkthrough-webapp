@@ -9,6 +9,7 @@ import { NavTabs } from './components/molecules/NavTabs';
 import { getAvailableMonths, getWalkthroughData, getDungeons } from './utils/dataFetcher';
 import { useProgress } from './hooks/useProgress';
 import type { WalkthroughMonth, Dungeon } from './types/walkthrough';
+import { LoginScreen } from './components/organisms/LoginScreen';
 
 // Lazy load pages for code splitting
 const WalkthroughView = lazy(() => import('./components/templates/WalkthroughView').then(module => ({ default: module.WalkthroughView })));
@@ -20,7 +21,7 @@ const VelvetRoomPage = lazy(() => import('./pages/VelvetRoomPage').then(module =
 
 function App() {
   const location = useLocation();
-  const { completedDays, resetProgress } = useProgress();
+  const { userId, logout, completedDays, resetProgress } = useProgress();
 
   const [availableMonths, setAvailableMonths] = useState<{ month: string; month_num: number }[]>([]);
   const [allData, setAllData] = useState<WalkthroughMonth[]>([]);
@@ -58,6 +59,10 @@ function App() {
   const isWalkthroughRoute = location.pathname === '/' || location.pathname.startsWith('/walkthrough');
   const isDungeonsRoute = location.pathname.startsWith('/dungeons');
 
+  if (!userId) {
+    return <LoginScreen />;
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-p4-black text-p4-yellow font-bold uppercase tracking-widest animate-pulse">
@@ -68,6 +73,20 @@ function App() {
 
   const sidebarContent = (
     <div className="flex flex-col py-6 space-y-8">
+      {/* User Profile Section */}
+      <section className="px-6 flex flex-col gap-2">
+         <div className="text-[10px] text-gray-500 font-black tracking-widest uppercase">Current Data</div>
+         <div className="flex justify-between items-center bg-p4-gray border border-p4-yellow px-4 py-2 skew-x-[-5deg]">
+           <span className="text-white font-black">{userId}</span>
+           <button 
+             onClick={logout}
+             className="text-[10px] text-p4-yellow hover:text-white uppercase font-bold tracking-widest"
+           >
+             Logout
+           </button>
+         </div>
+      </section>
+
       {/* Main Menu Section */}
       <section>
         <h3 className="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">

@@ -20,9 +20,9 @@ async function runSeed() {
     const db = await connectDB();
     console.log('Connected!');
 
-    // Tentukan path ke folder data (relatif terhadap direktori root backend)
-    // Karena kita menjalankan dari backend (menggunakan npm run seed), process.cwd() adalah D:\Coding\P4G Walkthrough\backend
-    const dataDir = path.resolve(process.cwd(), '../data');
+    // Tentukan path ke folder data
+    const rootDataDir = path.resolve(process.cwd(), '../data');
+    const webappDataDir = path.resolve(process.cwd(), '../webapp/src/data');
 
     // Daftar collections dan file JSON yang bersesuaian
     const collectionsToSeed = [
@@ -32,14 +32,21 @@ async function runSeed() {
       { name: 'social_links', file: 'social_links.json' },
       { name: 'walkthrough', file: 'walkthrough.json' },
       { name: 'tips', file: 'tips.json' },
-      { name: 'introduction', file: 'introduction.json' }
+      { name: 'introduction', file: 'introduction.json' },
+      { name: 'books', file: 'books.json' }, // Menambahkan books
+      { name: 'quests', file: 'quests.json' } // Menambahkan quests
     ];
 
     for (const item of collectionsToSeed) {
-      const filePath = path.join(dataDir, item.file);
+      let filePath = path.join(webappDataDir, item.file);
+      
+      // Jika file tidak ada di webapp/src/data atau ukurannya terlalu kecil (kosong), coba cek di root data
+      if (!fs.existsSync(filePath) || fs.statSync(filePath).size < 10) {
+        filePath = path.join(rootDataDir, item.file);
+      }
       
       // Cek apakah file ada
-      if (fs.existsSync(filePath)) {
+      if (fs.existsSync(filePath) && fs.statSync(filePath).size > 10) {
         console.log(`\nProcessing ${item.file}...`);
         const data = readJsonFile(filePath);
 

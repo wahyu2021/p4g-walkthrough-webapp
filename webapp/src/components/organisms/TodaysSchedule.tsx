@@ -62,7 +62,7 @@ export function TodaysSchedule() {
       </div>
 
       <NavLink 
-        to={`/walkthrough/${monthSlug}`}
+        to={`/walkthrough/${monthSlug}#day-${nextDay.date.replace(/\s+/g, '-').replace(/\//g, '-').toLowerCase()}`}
         className="block w-full text-center bg-p4-yellow text-p4-black px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-p4-black hover:bg-white transition-colors relative z-10 skew-x-[-5deg]"
       >
         <div style={{ transform: 'skewX(5deg)' }}>

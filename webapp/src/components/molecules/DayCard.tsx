@@ -8,8 +8,11 @@ interface DayCardProps {
 }
 
 export function DayCard({    day, isCompleted, onToggle }: DayCardProps) {
+  const dayId = `day-${day.date.replace(/\s+/g, '-').replace(/\//g, '-').toLowerCase()}`;
+
   return (
     <div 
+      id={dayId}
       className={`
         relative transition-all duration-300 group
         ${isCompleted ? 'opacity-60 grayscale-[0.3]' : ''}

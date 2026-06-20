@@ -20,6 +20,9 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            # Menghentikan eksekusi script SEKETIKA apabila ada command yang error/gagal (misal: gagal build)
+            set -e
+            
             # Pastikan environment PATH terbaca agar command npm dan pm2 dikenali
             export PATH=$PATH:/usr/local/bin:/usr/bin:/bin
             

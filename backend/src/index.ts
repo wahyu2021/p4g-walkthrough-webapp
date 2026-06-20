@@ -3,7 +3,6 @@ import type { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import { connectDB } from './db.js';
 
@@ -21,7 +20,6 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 app.use(helmet());
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
-app.use(mongoSanitize());
 
 // ==========================================
 // Middleware untuk mengecek koneksi DB

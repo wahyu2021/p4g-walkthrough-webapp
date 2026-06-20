@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { useProgress } from '../../hooks/useProgress';
+import { useUi } from '../../context/UiContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
 export function LoginScreen() {
   const { login } = useProgress();
+  const { showToast } = useUi();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   
   const [username, setUsername] = useState('');
@@ -46,15 +48,17 @@ export function LoginScreen() {
       if (mode === 'login') {
         // Eksekusi Context Login (menyimpan userId, token, dan role)
         login(data.user.username, data.token, data.user.role);
+        showToast('Login berhasil! Selamat datang kembali.', 'success');
       } else {
         // Jika sukses register, arahkan otomatis ke mode login
         setMode('login');
         setPassword('');
         setInviteCode('');
-        alert('Registrasi sukses! Silakan masuk dengan kata sandi barumu.');
+        showToast('Registrasi sukses! Silakan masuk dengan kata sandi barumu.', 'success');
       }
     } catch (err: any) {
       setErrorMsg(err.message);
+      showToast(err.message, 'error');
     } finally {
       setLoading(false);
     }

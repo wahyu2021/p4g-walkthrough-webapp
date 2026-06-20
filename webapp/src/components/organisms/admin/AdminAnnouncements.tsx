@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Megaphone, Send } from 'lucide-react';
+import { useUi } from '../../../context/UiContext';
 
 export function AdminAnnouncements({ token, baseUrl }: { token: string; baseUrl: string }) {
   const [message, setMessage] = useState('');
   const [isActive, setIsActive] = useState(false);
   const [type, setType] = useState<'info' | 'warning'>('info');
   const [loading, setLoading] = useState(false);
+  const { showToast } = useUi();
 
   useEffect(() => {
     fetch(`${baseUrl}/announcement`)
@@ -25,9 +27,10 @@ export function AdminAnnouncements({ token, baseUrl }: { token: string; baseUrl:
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, isActive, type })
       });
-      if (res.ok) alert('Pengumuman berhasil disiarkan!');
+      if (res.ok) showToast('Pengumuman berhasil disiarkan!', 'success');
+      else showToast('Gagal menyiarkan pengumuman', 'error');
     } catch (e) {
-      alert('Gagal menyiarkan.');
+      showToast('Gagal menyiarkan.', 'error');
     }
     setLoading(false);
   };

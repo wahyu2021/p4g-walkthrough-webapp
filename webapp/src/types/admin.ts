@@ -17,6 +17,7 @@ export type User = {
   lastIp?: string;
   lastUserAgent?: string;
   progressDays?: number;
+  lastMilestone?: string;
 };
 
 export type Metrics = {

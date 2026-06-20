@@ -52,11 +52,14 @@ export function AdminUsers({ users, onToggleSuspend, onResetPassword }: AdminUse
                   </span>
                 </td>
                 <td className="p-4 text-xs font-mono text-gray-400">
-                  <div className="flex flex-col gap-1 w-24">
+                  <div className="flex flex-col gap-1 w-32">
                     <span className="text-p4-yellow font-black">{u.progressDays || 0} Hari</span>
                     <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
                       <div className="h-full bg-p4-yellow" style={{ width: `${Math.min(((u.progressDays || 0) / 300) * 100, 100)}%` }}></div>
                     </div>
+                    <span className="text-[10px] text-gray-500 truncate" title={u.lastMilestone || 'Belum memulai'}>
+                      Lokasi: {u.lastMilestone ? String(u.lastMilestone).replace('_', ' ') : 'Prolog'}
+                    </span>
                   </div>
                 </td>
                 <td className="p-4 text-xs font-mono text-gray-400">

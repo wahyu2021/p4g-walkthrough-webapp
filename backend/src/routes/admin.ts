@@ -159,6 +159,13 @@ router.get('/users', checkAdmin, async (req: Request, res: Response): Promise<an
               then: { $size: { $ifNull: [{ $arrayElemAt: ["$progressData.checkedDays", 0] }, []] } },
               else: 0
             }
+          },
+          lastMilestone: {
+            $cond: {
+              if: { $gt: [{ $size: "$progressData" }, 0] },
+              then: { $arrayElemAt: [{ $ifNull: [{ $arrayElemAt: ["$progressData.checkedDays", 0] }, []] }, -1] },
+              else: null
+            }
           }
         }
       },

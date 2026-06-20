@@ -1,5 +1,5 @@
 import { useMemo, lazy, Suspense, useState, useEffect } from 'react';
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
 import { MainLayout } from './components/templates/MainLayout';
 import { MonthSelector } from './components/organisms/MonthSelector';
 import { DungeonSelector } from './components/organisms/DungeonSelector';

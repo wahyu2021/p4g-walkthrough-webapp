@@ -16,6 +16,7 @@ export type User = {
   lastLoginAt?: string;
   lastIp?: string;
   lastUserAgent?: string;
+  progressDays?: number;
 };
 
 export type Metrics = {

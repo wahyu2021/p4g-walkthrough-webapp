@@ -141,8 +141,36 @@ router.get('/metrics', checkAdmin, async (req: Request, res: Response): Promise<
 router.get('/users', checkAdmin, async (req: Request, res: Response): Promise<any> => {
   try {
     const db = await connectDB();
-    // Exclude password field
-    const users = await db.collection('users').find({}, { projection: { password: 0 } }).sort({ createdAt: -1 }).toArray();
+    // Menggunakan agregasi untuk menggabungkan data progres
+    const users = await db.collection('users').aggregate([
+      {
+        $lookup: {
+          from: 'user_progress',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'progressData'
+        }
+      },
+      {
+        $addFields: {
+          progressDays: {
+            $cond: {
+              if: { $gt: [{ $size: "$progressData" }, 0] },
+              then: { $size: { $ifNull: [{ $arrayElemAt: ["$progressData.checkedDays", 0] }, []] } },
+              else: 0
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          password: 0,
+          progressData: 0
+        }
+      },
+      { $sort: { createdAt: -1 } }
+    ]).toArray();
+    
     res.json({ users });
   } catch (err) {
     res.status(500).json({ error: 'Gagal memuat pengguna.' });

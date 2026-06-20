@@ -31,6 +31,7 @@ export function AdminUsers({ users, onToggleSuspend, onResetPassword }: AdminUse
             <tr className="bg-white/5 border-y-2 border-gray-600 text-xs uppercase tracking-widest text-gray-400">
               <th className="p-4">Identitas</th>
               <th className="p-4">Status</th>
+              <th className="p-4">Pencapaian</th>
               <th className="p-4">Kunjungan Terakhir</th>
               <th className="p-4">Perangkat & Jaringan</th>
               <th className="p-4 text-right">Tindakan Khusus</th>
@@ -49,6 +50,14 @@ export function AdminUsers({ users, onToggleSuspend, onResetPassword }: AdminUse
                   <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest flex items-center w-fit gap-1 ${u.status === 'suspended' ? 'bg-red-500 text-white' : 'text-green-400'}`}>
                     {u.status === 'suspended' ? 'Terbekukan' : 'Aktif'}
                   </span>
+                </td>
+                <td className="p-4 text-xs font-mono text-gray-400">
+                  <div className="flex flex-col gap-1 w-24">
+                    <span className="text-p4-yellow font-black">{u.progressDays || 0} Hari</span>
+                    <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-p4-yellow" style={{ width: `${Math.min(((u.progressDays || 0) / 300) * 100, 100)}%` }}></div>
+                    </div>
+                  </div>
                 </td>
                 <td className="p-4 text-xs font-mono text-gray-400">
                   {u.lastLoginAt ? (

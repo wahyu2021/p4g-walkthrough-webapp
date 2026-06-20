@@ -3,19 +3,17 @@ import type { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '../db.js';
-
+import { validate } from '../middlewares/validate.js';
+import { registerSchema, loginSchema, type RegisterInput, type LoginInput } from '../schemas/auth.schema.js';
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-persona-4-golden';
 
 // ==========================================
 // REGISTER ENDPOINT
 // ==========================================
-router.post('/register', async (req: Request, res: Response): Promise<any> => {
+router.post('/register', validate(registerSchema), async (req: Request, res: Response): Promise<any> => {
   try {
-    const { username, password, inviteCode } = req.body;
-    if (!username || !password || !inviteCode) {
-      return res.status(400).json({ error: 'Nama, sandi, dan tiket undangan wajib diisi.' });
-    }
+    const { username, password, inviteCode } = req.body as RegisterInput;
 
     const db = await connectDB();
     const usersCollection = db.collection('users');
@@ -30,11 +28,8 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
       return res.status(403).json({ error: 'Akses Ditolak: Tiket ini sudah hangus (sudah dipakai orang lain).' });
     }
 
-    // Sanitasi spasi ganda dan kapitalisasi berlebih pada pendaftaran awal
-    const cleanUsername = username.trim();
-    if (cleanUsername.length < 3 || cleanUsername.length > 20) {
-      return res.status(400).json({ error: 'Nama karakter harus 3 hingga 20 huruf.' });
-    }
+    // Zod sudah melakukan trim() dan membatasi max/min panjang
+    const cleanUsername = username;
 
     // Cek ketersediaan username secara kebal huruf besar/kecil (Case-Insensitive)
     const existingUser = await usersCollection.findOne({ username: { $regex: new RegExp(`^${cleanUsername}$`, 'i') } });
@@ -71,14 +66,15 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
 // ==========================================
 // LOGIN ENDPOINT
 // ==========================================
-router.post('/login', async (req: Request, res: Response): Promise<any> => {
+router.post('/login', validate(loginSchema), async (req: Request, res: Response): Promise<any> => {
   try {
-    const { username, password } = req.body;
+    const { username, password } = req.body as LoginInput;
     
     const db = await connectDB();
     const usersCollection = db.collection('users');
-    // Sanitasi spasi dan cari berdasarkan regex kebal huruf besar/kecil (Case-Insensitive)
-    const cleanUsername = username.trim();
+    
+    // Pencarian regex berdasarkan username yang sudah ditrim oleh Zod
+    const cleanUsername = username;
     const user = await usersCollection.findOne({ username: { $regex: new RegExp(`^${cleanUsername}$`, 'i') } });
     
     if (!user) {

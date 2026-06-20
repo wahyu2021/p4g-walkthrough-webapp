@@ -30,10 +30,16 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
       return res.status(403).json({ error: 'Akses Ditolak: Tiket ini sudah hangus (sudah dipakai orang lain).' });
     }
 
-    // Cek ketersediaan username
-    const existingUser = await usersCollection.findOne({ username });
+    // Sanitasi spasi ganda dan kapitalisasi berlebih pada pendaftaran awal
+    const cleanUsername = username.trim();
+    if (cleanUsername.length < 3 || cleanUsername.length > 20) {
+      return res.status(400).json({ error: 'Nama karakter harus 3 hingga 20 huruf.' });
+    }
+
+    // Cek ketersediaan username secara kebal huruf besar/kecil (Case-Insensitive)
+    const existingUser = await usersCollection.findOne({ username: { $regex: new RegExp(`^${cleanUsername}$`, 'i') } });
     if (existingUser) {
-      return res.status(400).json({ error: 'Karakter dengan nama ini sudah ada, pilih nama lain.' });
+      return res.status(400).json({ error: 'Karakter dengan nama ini sudah terbangun, silakan rancang nama/identitas yang berbeda.' });
     }
 
     // Mengamankan password dengan Bcrypt
@@ -42,7 +48,7 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
 
     // Menyimpan data pengguna
     const newUser = {
-      username,
+      username: cleanUsername,
       passwordHash,
       role: 'user', // Default sebagai user biasa
       createdAt: new Date(),
@@ -53,7 +59,7 @@ router.post('/register', async (req: Request, res: Response): Promise<any> => {
     // Hanguskan tiket agar tidak bisa didaur ulang
     await invitesCollection.updateOne(
       { _id: ticket._id },
-      { $set: { isUsed: true, usedBy: username } }
+      { $set: { isUsed: true, usedBy: cleanUsername } }
     );
 
     res.status(201).json({ message: 'Registrasi sukses', userId: result.insertedId });

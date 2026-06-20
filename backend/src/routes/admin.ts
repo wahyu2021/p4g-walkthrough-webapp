@@ -90,16 +90,40 @@ router.get('/metrics', checkAdmin, async (req: Request, res: Response): Promise<
     const activeTickets = await db.collection('invite_codes').countDocuments({ isUsed: false });
     const usedTickets = await db.collection('invite_codes').countDocuments({ isUsed: true });
     
-    // Rata-rata progress
+    // Rata-rata progress & Distribusi Chart
     const allProgress = await db.collection('user_progress').find({}).toArray();
     let avgDays = 0;
+    
+    const distribution = {
+      '0-10 Hari': 0,
+      '11-50 Hari': 0,
+      '51-150 Hari': 0,
+      '151-300 Hari': 0,
+      'Tamat (>300)': 0
+    };
+
     if (allProgress.length > 0) {
-      const sum = allProgress.reduce((acc, curr) => acc + (curr.checkedDays?.length || 0), 0);
+      const sum = allProgress.reduce((acc, curr) => {
+        const days = curr.checkedDays?.length || 0;
+        
+        if (days <= 10) distribution['0-10 Hari']++;
+        else if (days <= 50) distribution['11-50 Hari']++;
+        else if (days <= 150) distribution['51-150 Hari']++;
+        else if (days <= 300) distribution['151-300 Hari']++;
+        else distribution['Tamat (>300)']++;
+
+        return acc + days;
+      }, 0);
       avgDays = Math.round(sum / allProgress.length);
     }
 
+    const chartData = Object.keys(distribution).map(key => ({
+      name: key,
+      Pemain: distribution[key as keyof typeof distribution]
+    }));
+
     res.json({
-      totalUsers, totalTickets, activeTickets, usedTickets, avgDays
+      totalUsers, totalTickets, activeTickets, usedTickets, avgDays, chartData
     });
   } catch (err) {
     res.status(500).json({ error: 'Gagal memuat metrik.' });

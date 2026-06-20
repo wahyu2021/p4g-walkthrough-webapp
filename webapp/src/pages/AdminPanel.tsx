@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useProgress } from '../hooks/useProgress';
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Activity, Ticket as TicketIcon, Users } from 'lucide-react';
 
 import type { Ticket, User, Metrics } from '../types/admin';
 import { AdminMetrics } from '../components/organisms/admin/AdminMetrics';
@@ -21,7 +21,7 @@ export function AdminPanel() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'tickets' | 'users'>('tickets');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'users'>('overview');
 
   useEffect(() => {
     if (role !== 'admin') navigate('/');
@@ -108,25 +108,46 @@ export function AdminPanel() {
   if (role !== 'admin') return null;
 
   return (
-    <div className="min-h-screen bg-p4-black text-white p-4 md:p-12 relative overflow-hidden flex flex-col items-center">
+    <div className="min-h-screen bg-p4-black text-white relative overflow-hidden flex flex-col md:flex-row">
+      {/* Dynamic Background Pattern */}
       <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #111 25%, transparent 25%, transparent 75%, #111 75%, #111), repeating-linear-gradient(45deg, #111 25%, #222 25%, #222 75%, #111 75%, #111)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px' }}></div>
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-p4-yellow/10 to-transparent pointer-events-none mix-blend-overlay"></div>
 
-      <div className="w-full max-w-6xl z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 bg-white/5 backdrop-blur-md p-6 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] skew-x-[-3deg]">
-          <div className="skew-x-[3deg]">
-            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-p4-yellow to-white uppercase tracking-widest drop-shadow-[2px_2px_0_#000]">
-              Admin Panel
-            </h1>
-            <p className="text-gray-300 text-xs md:text-sm font-bold tracking-[0.3em] uppercase mt-2 border-b border-gray-500/30 pb-2 inline-block">
-              Dasbor Manajemen & Analitik Utama
-            </p>
-          </div>
-          <Link to="/" className="mt-6 md:mt-0 group relative px-6 py-3 bg-p4-black border-2 border-p4-yellow skew-x-[3deg] overflow-hidden flex items-center justify-center transition-all hover:scale-105">
-            <span className="absolute inset-0 bg-p4-yellow transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
-            <span className="relative text-p4-yellow group-hover:text-p4-black font-black uppercase tracking-widest text-sm z-10 transition-colors">
-              Kembali ke Beranda
-            </span>
+      {/* Sidebar Navigasi Vertikal */}
+      <div className="w-full md:w-64 bg-[#111] border-b-2 md:border-b-0 md:border-r-2 border-p4-yellow/30 z-20 flex flex-col relative md:min-h-screen shrink-0 shadow-[4px_0_15px_rgba(0,0,0,0.5)]">
+        <div className="p-6 border-b border-gray-800 bg-p4-yellow/5">
+          <h1 className="text-2xl font-black text-p4-yellow uppercase tracking-widest drop-shadow-[2px_2px_0_#000]">
+            Admin Panel
+          </h1>
+          <p className="text-gray-400 text-[10px] font-bold tracking-[0.2em] uppercase mt-1">
+            Sistem Komando Pusat
+          </p>
+        </div>
+
+        <div className="flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible p-4 gap-2 flex-1 items-start md:items-stretch">
+          <button onClick={() => setActiveTab('overview')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 md:shrink border-l-4 md:border-l-0 ${activeTab === 'overview' ? 'bg-p4-yellow text-p4-black md:border-l-4 md:border-p4-yellow border-transparent shadow-[4px_4px_0_0_#000]' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'}`}>
+            <Activity className="w-4 h-4" /> Overview & Metrik
+          </button>
+          <button onClick={() => setActiveTab('tickets')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 md:shrink border-l-4 md:border-l-0 ${activeTab === 'tickets' ? 'bg-p4-yellow text-p4-black md:border-l-4 md:border-p4-yellow border-transparent shadow-[4px_4px_0_0_#000]' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'}`}>
+            <TicketIcon className="w-4 h-4" /> Sistem Tiket
+          </button>
+          <button onClick={() => setActiveTab('users')} className={`flex items-center gap-3 px-4 py-3 font-black uppercase tracking-widest transition-all text-xs text-left whitespace-nowrap md:whitespace-normal shrink-0 md:shrink border-l-4 md:border-l-0 ${activeTab === 'users' ? 'bg-p4-yellow text-p4-black md:border-l-4 md:border-p4-yellow border-transparent shadow-[4px_4px_0_0_#000]' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'}`}>
+            <Users className="w-4 h-4" /> Manajemen Pengguna
+          </button>
+        </div>
+
+        <div className="p-4 border-t border-gray-800 mt-auto hidden md:block">
+          <Link to="/" className="flex items-center gap-2 text-p4-yellow hover:text-white transition-colors text-xs font-bold uppercase tracking-widest">
+            ← Kembali ke Beranda
+          </Link>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="flex-1 p-4 md:p-8 z-10 overflow-y-auto max-w-7xl mx-auto w-full">
+        <div className="md:hidden flex justify-end mb-4">
+          <Link to="/" className="text-p4-yellow hover:text-white text-xs font-bold uppercase tracking-widest underline">
+            ← Kembali ke Beranda
           </Link>
         </div>
 
@@ -138,40 +159,19 @@ export function AdminPanel() {
           </div>
         )}
 
-        <AdminMetrics metrics={metrics} />
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {activeTab === 'overview' && <AdminMetrics metrics={metrics} />}
 
-        <div className="flex gap-4 mb-6 skew-x-[-2deg]">
-          <button 
-            onClick={() => setActiveTab('tickets')}
-            className={`px-6 py-3 font-black uppercase tracking-widest transition-all ${activeTab === 'tickets' ? 'bg-p4-yellow text-p4-black shadow-[4px_4px_0_0_#000]' : 'bg-[#1a1a1a] text-gray-400 hover:text-white border border-gray-600'}`}
-          >
-            Sistem Tiket
-          </button>
-          <button 
-            onClick={() => setActiveTab('users')}
-            className={`px-6 py-3 font-black uppercase tracking-widest transition-all ${activeTab === 'users' ? 'bg-p4-yellow text-p4-black shadow-[4px_4px_0_0_#000]' : 'bg-[#1a1a1a] text-gray-400 hover:text-white border border-gray-600'}`}
-          >
-            Manajemen Pengguna
-          </button>
-        </div>
-
-        <div className="bg-[#1a1a1a] p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] skew-x-[-2deg] relative">
           {activeTab === 'tickets' && (
-            <AdminTickets 
-              tickets={tickets} 
-              loading={loading} 
-              onGenerate={generateTicket} 
-              onPurge={purgeTickets} 
-              onRevoke={revokeTicket} 
-            />
+            <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
+              <AdminTickets tickets={tickets} loading={loading} onGenerate={generateTicket} onPurge={purgeTickets} onRevoke={revokeTicket} />
+            </div>
           )}
           
           {activeTab === 'users' && (
-            <AdminUsers 
-              users={users} 
-              onToggleSuspend={toggleSuspend} 
-              onResetPassword={resetPassword} 
-            />
+            <div className="bg-[#1a1a1a] p-4 md:p-8 border-l-4 border-p4-yellow shadow-[8px_8px_0_0_#000] relative">
+              <AdminUsers users={users} onToggleSuspend={toggleSuspend} onResetPassword={resetPassword} />
+            </div>
           )}
         </div>
       </div>

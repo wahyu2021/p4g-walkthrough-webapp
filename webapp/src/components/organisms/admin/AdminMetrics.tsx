@@ -121,7 +121,7 @@ export function AdminMetrics() {
               Status Akun
             </h3>
             <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie data={userData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value" stroke="none">
                     {userData.map((entry, index) => (
@@ -144,7 +144,7 @@ export function AdminMetrics() {
               Sirkulasi Tiket
             </h3>
             <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie data={ticketData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value" stroke="none">
                     {ticketData.map((entry, index) => (

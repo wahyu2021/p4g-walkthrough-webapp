@@ -10,8 +10,8 @@ export const validate = (schema: any) => {
         params: req.params,
       });
       req.body = parsedData.body;
-      req.query = parsedData.query;
-      req.params = parsedData.params;
+      Object.defineProperty(req, 'query', { value: parsedData.query, configurable: true, enumerable: true, writable: true });
+      Object.defineProperty(req, 'params', { value: parsedData.params, configurable: true, enumerable: true, writable: true });
       
       return next();
     } catch (error: any) {

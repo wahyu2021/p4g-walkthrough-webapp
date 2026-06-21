@@ -17,6 +17,9 @@ const app = express();
 const port = process.env.PORT || 5000;
 const httpServer = createServer(app);
 
+// Wajib untuk deployment di belakang Reverse Proxy (Nginx/Cloudflare) agar Rate Limit tidak Error (ERR_ERL_UNEXPECTED_X_FORWARDED_FOR)
+app.set('trust proxy', 1);
+
 // Konfigurasi CORS - hanya izinkan origin dari env variable
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')

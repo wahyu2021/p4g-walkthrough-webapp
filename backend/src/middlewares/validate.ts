@@ -15,13 +15,13 @@ export const validate = (schema: any) => {
       
       return next();
     } catch (error: any) {
-      if (error instanceof z.ZodError || (error && typeof error === 'object' && 'issues' in error)) {
-        // Fallback kompatibilitas Zod v3 dan Zod v4
-        const issues = error.issues || error.errors || [];
+      console.error('Validate Middleware Error:', error);
+      const issues = error?.issues || error?.errors;
+      if (issues && Array.isArray(issues)) {
         const errorMessage = issues.map((e: any) => e.message).join(', ');
         return res.status(400).json({ error: errorMessage || 'Validasi Gagal' });
       }
-      return res.status(500).json({ error: 'Terjadi kesalahan sistem saat validasi.' });
+      return res.status(500).json({ error: 'Terjadi kesalahan sistem saat validasi.', detail: error?.message || 'Unknown error' });
     }
   };
 };
